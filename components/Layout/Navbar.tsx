@@ -1,48 +1,49 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import P96Logo from './P96Logo'
 
 export default function Navbar() {
-  const pathname = usePathname()
-
   return (
     <nav
       style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingTop: 'var(--space-6)',
-        paddingBottom: 'var(--space-4)',
+        padding: '20px 24px',
+        borderBottom: '1px solid var(--c-border)',
       }}
     >
-      <Link href="/" style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.02em' }}>
-        P96
+      <Link href="/" aria-label="P96 home">
+        <P96Logo color="#ffffff" height={18} />
       </Link>
 
-      <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'center' }}>
-        <Link
-          href="/calendar"
-          style={{
-            fontSize: 14,
-            fontWeight: 600,
-            color: pathname === '/calendar' ? 'var(--c-text)' : 'var(--c-text-muted)',
-          }}
-        >
-          Calendar
-        </Link>
-        <Link
-          href="/about"
-          style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)' }}
-        >
-          About
-        </Link>
-        <Link
-          href="/shop"
-          style={{ fontSize: 14, fontWeight: 600, color: 'var(--c-text-muted)' }}
-        >
-          Shop
-        </Link>
+      <div
+        style={{
+          display: 'flex',
+          gap: 'var(--space-6)',
+          alignItems: 'center',
+        }}
+      >
+        {(['EVENTS', 'SHOP', 'ABOUT'] as const).map(item => (
+          <Link
+            key={item}
+            href={item === 'EVENTS' ? '/calendar' : `/${item.toLowerCase()}`}
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              color: 'var(--c-text-subtle)',
+              fontFamily: 'var(--font-body)',
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--c-text-muted)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--c-text-subtle)')}
+          >
+            {item}
+          </Link>
+        ))}
       </div>
     </nav>
   )

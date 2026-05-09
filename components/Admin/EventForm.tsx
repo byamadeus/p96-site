@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase, Event } from '@/lib/supabase'
+import { supabase, Event, EventCategory } from '@/lib/supabase'
 import { matches } from '@/data/matches'
 
 const EMPTY: Omit<Event, 'id' | 'created_at'> = {
   title: '',
   description: '',
-  type: 'p96',
+  category: 'watch_party',
   date: '',
   time: '',
   location_name: '',
@@ -62,7 +62,7 @@ export default function EventForm({ existing, onSaved, onCancel }: Props) {
       ? {
           title: existing.title,
           description: existing.description ?? '',
-          type: existing.type,
+          category: existing.category,
           date: existing.date,
           time: existing.time ?? '',
           location_name: existing.location_name ?? '',
@@ -149,11 +149,14 @@ export default function EventForm({ existing, onSaved, onCancel }: Props) {
         <input style={input} required value={form.title} onChange={e => set('title', e.target.value)} placeholder="Morocco Watch Party" />
       </Field>
 
-      <Field name="Type">
-        <select style={{ ...input, cursor: 'pointer' }} value={form.type} onChange={e => set('type', e.target.value as Event['type'])}>
-          <option value="p96_wc">P96 × World Cup</option>
-          <option value="community">Community</option>
-          <option value="p96">P96</option>
+      <Field name="Category">
+        <select style={{ ...input, cursor: 'pointer' }} value={form.category} onChange={e => set('category', e.target.value as EventCategory)}>
+          <option value="watch_party">World Cup Watch Party</option>
+          <option value="talks">Talks</option>
+          <option value="workshop">Workshop</option>
+          <option value="hangout">Hangout</option>
+          <option value="collaboration">Collaboration</option>
+          <option value="film_screening">Film Screening</option>
         </select>
       </Field>
 

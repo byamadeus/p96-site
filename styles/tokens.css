@@ -1,10 +1,14 @@
 :root {
   /* Brand colors — African flag palette */
-  --c-gold: #F5C842;
+  --c-gold: #FFDA44;
   --c-red: #E8412C;
   --c-green: #1A7F3C;
   --c-blue: #1B4FD8;
   --c-orange: #F97B22;
+
+  /* Intake / onboarding bg */
+  --c-intake-bg: #FFDA44;
+  --c-intake-text: #111111;
 
   /* Surfaces */
   --c-bg: #0E0E0E;
@@ -35,4 +39,8 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-12: 48px;
+
+  /* Typography */
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-body: 'Switzer', system-ui, sans-serif;
 }

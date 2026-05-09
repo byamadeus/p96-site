@@ -1,5 +1,6 @@
 import { supabase, Event } from '@/lib/supabase'
 import CalendarView from '@/components/Calendar/CalendarView'
+import { seedEvents } from '@/data/seedEvents'
 
 export const revalidate = 60
 
@@ -10,5 +11,13 @@ export default async function CalendarPage() {
     .eq('is_published', true)
     .order('date', { ascending: true })
 
-  return <CalendarView events={(data ?? []) as Event[]} />
+  const dbEvents = (data ?? []) as Event[]
+
+  // In dev, always layer seed events under real DB events
+  const events =
+    process.env.NODE_ENV === 'development'
+      ? [...seedEvents.filter(s => !dbEvents.find(d => d.title === s.title)), ...dbEvents]
+      : dbEvents
+
+  return <CalendarView events={events} />
 }

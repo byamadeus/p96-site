@@ -5,15 +5,21 @@ import { supabase, Event } from '@/lib/supabase'
 import EventForm from '@/components/Admin/EventForm'
 
 const TYPE_COLOR: Record<string, string> = {
-  p96_wc: '#F5C842',
-  community: '#1A7F3C',
-  p96: 'rgba(255,255,255,0.35)',
+  watch_party:    '#FFDA44',
+  talks:          '#1B4FD8',
+  workshop:       '#F97B22',
+  hangout:        '#1A7F3C',
+  collaboration:  '#E8412C',
+  film_screening: 'rgba(255,255,255,0.35)',
 }
 
 const TYPE_LABEL: Record<string, string> = {
-  p96_wc: 'P96 × WC',
-  community: 'Community',
-  p96: 'P96',
+  watch_party:    'Watch Party',
+  talks:          'Talks',
+  workshop:       'Workshop',
+  hangout:        'Hangout',
+  collaboration:  'Collab',
+  film_screening: 'Film',
 }
 
 function fmtDate(d: string) {
@@ -131,13 +137,13 @@ export default function AdminDashboard() {
                     }}
                   >
                     {/* Color dot */}
-                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: TYPE_COLOR[ev.type], flexShrink: 0 }} />
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: TYPE_COLOR[ev.category], flexShrink: 0 }} />
 
                     {/* Info */}
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{ev.title}</div>
                       <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>
-                        {fmtDate(ev.date)} · {TYPE_LABEL[ev.type]}
+                        {fmtDate(ev.date)} · {TYPE_LABEL[ev.category]}
                       </div>
                     </div>
 
