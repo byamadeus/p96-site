@@ -1,0 +1,38 @@
+:root {
+  /* Brand colors — African flag palette */
+  --c-gold: #F5C842;
+  --c-red: #E8412C;
+  --c-green: #1A7F3C;
+  --c-blue: #1B4FD8;
+  --c-orange: #F97B22;
+
+  /* Surfaces */
+  --c-bg: #0E0E0E;
+  --c-surface: #161616;
+  --c-surface2: #1F1F1F;
+
+  /* Text */
+  --c-text: #FFFFFF;
+  --c-text-muted: rgba(255, 255, 255, 0.45);
+  --c-text-subtle: rgba(255, 255, 255, 0.25);
+
+  /* Borders */
+  --c-border: rgba(255, 255, 255, 0.08);
+  --c-border-emphasis: rgba(255, 255, 255, 0.15);
+
+  /* Layout */
+  --radius-card: 12px;
+  --radius-pill: 99px;
+  --radius-sm: 6px;
+  --page-padding: 16px;
+  --max-width: 480px;
+
+  /* Spacing scale (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+}
