@@ -13,11 +13,11 @@ export default async function CalendarPage() {
 
   const dbEvents = (data ?? []) as Event[]
 
-  // In dev, always layer seed events under real DB events
-  const events =
-    process.env.NODE_ENV === 'development'
-      ? [...seedEvents.filter(s => !dbEvents.find(d => d.title === s.title)), ...dbEvents]
-      : dbEvents
+  // Always show seed events until replaced by real events from admin
+  const events = [
+    ...seedEvents.filter(s => !dbEvents.find(d => d.title === s.title)),
+    ...dbEvents,
+  ]
 
   return <CalendarView events={events} />
 }
