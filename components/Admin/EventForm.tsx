@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { X } from 'lucide-react'
 import { supabase, Event, EventCategory } from '@/lib/supabase'
 import { matches } from '@/data/matches'
 
@@ -228,7 +229,7 @@ export default function EventForm({ existing, onSaved, onCancel }: Props) {
             <div key={i} style={{ display: 'flex', gap: 8 }}>
               <input style={{ ...input, flex: '0 0 120px' }} placeholder="Label" value={link.label} onChange={e => updateLink(i, 'label', e.target.value)} />
               <input style={{ ...input, flex: 1 }} placeholder="https://…" value={link.url} onChange={e => updateLink(i, 'url', e.target.value)} />
-              <button type="button" onClick={() => removeLink(i)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: 18, padding: '0 4px' }}>×</button>
+              <button type="button" onClick={() => removeLink(i)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', padding: '0 4px', display: 'flex', alignItems: 'center' }}><X size={16} strokeWidth={2} /></button>
             </div>
           ))}
           <button

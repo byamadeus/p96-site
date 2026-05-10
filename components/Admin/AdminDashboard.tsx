@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { ArrowLeft, X } from 'lucide-react'
 import { supabase, Event } from '@/lib/supabase'
 import EventForm from '@/components/Admin/EventForm'
 
@@ -89,7 +90,7 @@ export default function AdminDashboard() {
         {view === 'new' && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-              <button onClick={() => setView('list')} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: 20, padding: 0, lineHeight: 1 }}>←</button>
+              <button onClick={() => setView('list')} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', padding: 0, lineHeight: 1, display: 'flex', alignItems: 'center' }}><ArrowLeft size={18} strokeWidth={2} /></button>
               <h2 style={{ fontSize: 15, fontWeight: 700 }}>New event</h2>
             </div>
             <EventForm onSaved={afterSave} onCancel={() => setView('list')} />
@@ -100,7 +101,7 @@ export default function AdminDashboard() {
         {view === 'edit' && editing && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-              <button onClick={() => { setView('list'); setEditing(null) }} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', fontSize: 20, padding: 0, lineHeight: 1 }}>←</button>
+              <button onClick={() => { setView('list'); setEditing(null) }} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.45)', cursor: 'pointer', padding: 0, lineHeight: 1, display: 'flex', alignItems: 'center' }}><ArrowLeft size={18} strokeWidth={2} /></button>
               <h2 style={{ fontSize: 15, fontWeight: 700 }}>Edit event</h2>
             </div>
             <EventForm existing={editing} onSaved={afterSave} onCancel={() => { setView('list'); setEditing(null) }} />
@@ -179,9 +180,9 @@ export default function AdminDashboard() {
                     {/* Delete */}
                     <button
                       onClick={() => deleteEvent(ev)}
-                      style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.2)', cursor: 'pointer', fontSize: 18, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
+                      style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.2)', cursor: 'pointer', padding: '0 2px', lineHeight: 1, flexShrink: 0, display: 'flex', alignItems: 'center' }}
                     >
-                      ×
+                      <X size={16} strokeWidth={2} />
                     </button>
                   </div>
                 ))}

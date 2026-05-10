@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Bug } from 'lucide-react'
 import P96Logo from './P96Logo'
 
 export default function Navbar() {
@@ -44,6 +45,22 @@ export default function Navbar() {
             {item}
           </Link>
         ))}
+
+        <Link
+          href="/admin"
+          aria-label="Admin"
+          title="Admin"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            color: 'var(--c-text-subtle)',
+            transition: 'color 0.15s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'var(--c-text-muted)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'var(--c-text-subtle)')}
+        >
+          <Bug size={14} strokeWidth={1.75} />
+        </Link>
       </div>
     </nav>
   )

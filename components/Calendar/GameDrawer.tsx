@@ -1,5 +1,6 @@
 'use client'
 
+import { Calendar, MapPin } from 'lucide-react'
 import { Match } from '@/data/matches'
 
 function fmtDate(dateStr: string) {
@@ -77,8 +78,14 @@ export default function GameDrawer({ match, onClose }: { match: Match | null; on
 
             {/* Meta */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', fontSize: 14, color: 'var(--c-text-muted)', marginBottom: 'var(--space-6)' }}>
-              <span>📅 {fmtDate(match.date)} · {match.kickoff}</span>
-              <span>📍 {match.venue}, {match.city}</span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Calendar size={14} strokeWidth={2} style={{ flexShrink: 0 }} />
+                {fmtDate(match.date)} · {match.kickoff}
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <MapPin size={14} strokeWidth={2} style={{ flexShrink: 0 }} />
+                {match.venue}, {match.city}
+              </span>
             </div>
 
             {/* Diaspora notes */}

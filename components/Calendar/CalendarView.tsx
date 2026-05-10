@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import { Check, Share2, ChevronUp, RotateCcw } from 'lucide-react'
 import Navbar from '@/components/Layout/Navbar'
 import IntakeModal from '@/components/Entry/IntakeModal'
 import EventCard from './EventCard'
@@ -224,7 +225,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
             borderRadius: 4,
             border: '1.5px solid var(--c-border)',
             background: 'transparent',
-            color: filterCopied ? 'var(--c-green)' : 'var(--c-text-muted)',
+            color: filterCopied ? 'var(--c-green)' : 'rgba(255,255,255,0.65)',
             fontSize: 10,
             fontWeight: 600,
             letterSpacing: '0.08em',
@@ -234,7 +235,10 @@ export default function CalendarView({ events }: { events: Event[] }) {
             transition: 'color 0.2s, border-color 0.2s',
           }}
         >
-          {filterCopied ? '✓ COPIED' : '⤴ SAVE FILTER'}
+          {filterCopied
+            ? <><Check size={11} strokeWidth={2.5} /> COPIED</>
+            : <><Share2 size={11} strokeWidth={2} /> SAVE FILTER</>
+          }
         </button>
       </div>
 
@@ -326,7 +330,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
                   fontWeight: 700,
                   letterSpacing: '0.1em',
                   textTransform: 'uppercase',
-                  color: store.wcMode ? 'var(--c-gold)' : 'var(--c-text-muted)',
+                  color: store.wcMode ? 'var(--c-gold)' : 'rgba(255,255,255,0.65)',
                   fontFamily: 'var(--font-body)',
                   flexShrink: 0,
                 }}
@@ -418,7 +422,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
                         fontSize: 10,
                         fontWeight: 600,
                         letterSpacing: '0.08em',
-                        color: store.wcMode ? 'var(--c-gold)' : 'var(--c-text-subtle)',
+                        color: store.wcMode ? 'var(--c-gold)' : 'rgba(255,255,255,0.5)',
                         textTransform: 'uppercase',
                         fontFamily: 'var(--font-body)',
                       }}
@@ -507,6 +511,67 @@ export default function CalendarView({ events }: { events: Event[] }) {
         </Drawer.Root>
       )}
 
+      {/* Footer */}
+      <footer
+        style={{
+          borderTop: '1px solid var(--c-border)',
+          padding: '20px 24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.38)',
+            fontFamily: 'var(--font-body)',
+          }}
+        >
+          P96 IS THE PLACE
+        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <a
+            href="mailto:info@p96.nyc"
+            style={{
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.38)',
+              fontFamily: 'var(--font-body)',
+              textDecoration: 'none',
+            }}
+          >
+            STAY IN TOUCH
+          </a>
+          <button
+            onClick={() => {
+              document.cookie = 'p96_intake=; path=/; max-age=0'
+              window.location.reload()
+            }}
+            title="Reset intake cookie (dev)"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: 0,
+              color: 'rgba(255,255,255,0.2)',
+              display: 'flex',
+              alignItems: 'center',
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.2)')}
+          >
+            <RotateCcw size={12} strokeWidth={2} />
+          </button>
+        </div>
+      </footer>
+
       <style>{`
         @keyframes shimmer {
           0% { background-position: 0% 0% }
@@ -548,7 +613,7 @@ function FilterGroup({
           fontWeight: 700,
           letterSpacing: '0.1em',
           textTransform: 'uppercase',
-          color: 'var(--c-text-muted)',
+          color: 'rgba(255,255,255,0.65)',
           padding: '0 16px',
           marginBottom: 10,
           fontFamily: 'var(--font-body)',
@@ -581,9 +646,9 @@ function FilterGroup({
                 borderRadius: 4,
                 border: on
                   ? `1.5px solid ${color}`
-                  : '1.5px solid var(--c-border)',
+                  : '1.5px solid rgba(255,255,255,0.18)',
                 background: on ? `${color}18` : 'transparent',
-                color: on ? color : 'var(--c-text-muted)',
+                color: on ? color : 'rgba(255,255,255,0.72)',
                 fontSize: 12,
                 fontWeight: on ? 700 : 500,
                 fontFamily: 'var(--font-body)',
@@ -607,7 +672,7 @@ function FilterGroup({
             margin: '8px 16px 0',
             fontSize: 11,
             fontWeight: 600,
-            color: 'var(--c-text-subtle)',
+            color: 'rgba(255,255,255,0.5)',
             background: 'none',
             border: 'none',
             cursor: 'pointer',
@@ -616,7 +681,10 @@ function FilterGroup({
             padding: 0,
           }}
         >
-          {expanded ? 'Show less ↑' : `+${hidden} more`}
+          {expanded
+            ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>Show less <ChevronUp size={11} strokeWidth={2} /></span>
+            : `+${hidden} more`
+          }
         </button>
       )}
     </div>

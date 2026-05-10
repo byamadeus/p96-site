@@ -1,5 +1,6 @@
 'use client'
 
+import { MapPin } from 'lucide-react'
 import { Match, Team } from '@/data/matches'
 
 function fmt(dateStr: string) {
@@ -97,8 +98,9 @@ export default function GameCard({ match, onOpen }: { match: Match; onOpen: () =
       </div>
 
       {/* Venue */}
-      <div style={{ fontSize: 12, color: 'var(--c-text-muted)' }}>
-        📍 {match.venue} · {match.city}
+      <div style={{ fontSize: 12, color: 'var(--c-text-muted)', display: 'flex', alignItems: 'center', gap: 5 }}>
+        <MapPin size={12} strokeWidth={2} style={{ flexShrink: 0 }} />
+        {match.venue} · {match.city}
       </div>
     </div>
   )

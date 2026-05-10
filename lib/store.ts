@@ -27,7 +27,7 @@ interface AppStore {
 
 export const useAppStore = create<AppStore>((set, get) => ({
   intake: { nations: [], borough: null, email: null, phone: null },
-  wcMode: false,
+  wcMode: true,
   activeCategory: null,
   activeBorough: null,
   activeNations: [],

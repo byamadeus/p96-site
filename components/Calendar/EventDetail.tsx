@@ -1,5 +1,6 @@
 'use client'
 
+import { Calendar, MapPin, ArrowUpRight } from 'lucide-react'
 import { Event, getCategoryMeta } from '@/lib/supabase'
 import { Match } from '@/data/matches'
 
@@ -137,8 +138,16 @@ export default function EventDetail({ event, match, wcMode }: EventDetailProps) 
           color: 'var(--c-text-muted)',
         }}
       >
-        <span>📅 {fmtDate(event.date)}{event.time ? ` · ${fmtTime(event.time)}` : ''}</span>
-        {event.location_name && <span>📍 {event.location_name}</span>}
+        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Calendar size={13} strokeWidth={2} style={{ flexShrink: 0 }} />
+          {fmtDate(event.date)}{event.time ? ` · ${fmtTime(event.time)}` : ''}
+        </span>
+        {event.location_name && (
+          <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <MapPin size={13} strokeWidth={2} style={{ flexShrink: 0 }} />
+            {event.location_name}
+          </span>
+        )}
         {event.location_address && (
           <span style={{ fontSize: 12 }}>{event.location_address}</span>
         )}
@@ -200,7 +209,9 @@ export default function EventDetail({ event, match, wcMode }: EventDetailProps) 
                 textUnderlineOffset: 3,
               }}
             >
-              {link.label} ↗
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                {link.label} <ArrowUpRight size={12} strokeWidth={2} />
+              </span>
             </a>
           ))}
         </div>
