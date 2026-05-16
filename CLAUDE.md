@@ -7,7 +7,7 @@
 
 A mobile-first community event portal for **P96 Culture House** centered on the 2026 FIFA World Cup. The site serves the Black diaspora community in NYC — helping people find where to watch diaspora nations play, discover P96-hosted events, and connect with their community during the tournament.
 
-The user journey: **Instagram → Site → "I know where to go" → RSVP → Show up.**
+The user journey: **Instagram → Site → World Cup 2026 → Choose your country → Event cards → RSVP → Show up.**
 
 This is a pro bono sprint. Keep decisions lean, cheap, and fast to ship.
 
@@ -17,11 +17,21 @@ This is a pro bono sprint. Keep decisions lean, cheap, and fast to ship.
 
 ```
 /                   → Homepage (full-screen Mux video hero + nav overlay)
-/calendar           → Unified calendar (World Cup mode / All Events mode)
+/wc2026             → WC2026 country selector (soccer ball grid, 10 diaspora nations)
+/wc2026/[country]   → Nation events page (full-screen swipeable cards, shareable URL)
+/calendar           → Unified calendar — BURIED (not in nav, exists for admin/direct link)
 /about              → (ghost page, P2)
 /shop               → (ghost page, P2)
 /admin              → Admin panel (P96 team only, password-protected)
 ```
+
+### WC2026 flow
+- `/wc2026` — soccer ball pentagon grid, 10 nations (HT + CW TBD), P96 logo center
+- `/wc2026/[country]` — events filtered by game_id → matches.ts lookup + general cultural events
+- SVGs live in `public/teams/` — 10 position files (top-middle, top-left, etc.)
+- Position → nation mapping is in `components/WC/CountrySelector.tsx`
+- Event cards: full-screen, CSS scroll-snap horizontal, date = hero element
+- Desktop: trading card feel, prev/next arrows outside card, max-width 440px
 
 ---
 
@@ -170,20 +180,18 @@ Filters encode to URL params: `?n=GH,SN&b=Brooklyn&cat=watch_party&wc=1`
 
 ## Homepage
 
-Full-screen Mux video background, dark gradient scrim, content overlay.
+Full-screen static image background (`/public/capture-11.jpg`), dark gradient scrim, content overlay.
 
 - Top-left: P96 SVG logo (links to `/`)
-- Bottom: EVENTS (links to `/calendar` with gold "2026 WORLD CUP" badge) / SHOP / ABOUT
-- SHOP + ABOUT: "COMING SOON" label fades in 12px to the right on hover, word fades to 35% opacity
+- Bottom: WORLD CUP (links to `/wc2026`) / SHOP / ABOUT — 4px gap between items
+- SHOP + ABOUT: "COMING SOON" label fades in on hover
 - Footer bar: "P96 IS THE PLACE" · "STAY IN TOUCH" (mailto)
-
-Video setup: `@mux/mux-video` web component, `muted` set imperatively via ref (React bug workaround).
 
 ---
 
 ## Navbar (inner pages)
 
-Minimal: P96 logo left → `/`. Right: EVENTS · SHOP · ABOUT at 10px allcaps muted + Bug icon → `/admin`.
+Minimal: P96 logo left → `/`. Right: SHOP · ABOUT at 10px allcaps muted + Bug icon → `/admin`. EVENTS removed from nav.
 
 ---
 
@@ -219,17 +227,19 @@ Password-protected (Supabase auth). Event CRUD — create/edit/delete, flier upl
 | `/admin` | Event CRUD, flier upload, publish toggle |
 
 **Key files:**
-- `components/Entry/HomepageLayout.tsx` — homepage
+- `components/Entry/HomepageLayout.tsx` — homepage (EVENTS → /wc2026)
 - `components/Entry/IntakeModal.tsx` — 3-step intake modal
-- `components/Calendar/CalendarView.tsx` — main calendar + FilterGroup
-- `components/Calendar/EventDetail.tsx` — single detail component (desktop panel + mobile drawer)
-- `components/Calendar/EventCard.tsx` — list row card
-- `components/Layout/Navbar.tsx` — inner page nav
+- `components/WC/CountrySelector.tsx` — /wc2026 soccer ball grid
+- `components/WC/NationEventsPage.tsx` — /wc2026/[country] swipeable cards
+- `components/Calendar/CalendarView.tsx` — buried calendar (still works, not in nav)
+- `components/Layout/Navbar.tsx` — inner page nav (EVENTS removed)
 - `lib/store.ts` — Zustand store
 - `lib/supabase.ts` — DB client + category types + `getCategoryMeta()`
 - `lib/nations.ts` — 12 nations + 27 boroughs
 - `data/matches.ts` — 33 diaspora WC matches
 - `data/seedEvents.ts` — 14 seed events
+- `styles/tokens.css` — design tokens + atomic type classes (.t-hero, .t-display, etc.)
+- `public/teams/` — 10 flag SVGs for soccer ball grid
 
 ---
 

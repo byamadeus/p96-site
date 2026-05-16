@@ -26,10 +26,10 @@ export default function Navbar() {
           alignItems: 'center',
         }}
       >
-        {(['EVENTS', 'SHOP', 'ABOUT'] as const).map(item => (
+        {(['SHOP', 'ABOUT'] as const).map(item => (
           <Link
             key={item}
-            href={item === 'EVENTS' ? '/calendar' : `/${item.toLowerCase()}`}
+            href={`/${item.toLowerCase()}`}
             style={{
               fontSize: 10,
               fontWeight: 600,

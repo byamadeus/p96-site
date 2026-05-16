@@ -1,46 +1,162 @@
 :root {
-  /* Brand colors — African flag palette */
-  --c-gold: #FFDA44;
-  --c-red: #E8412C;
-  --c-green: #1A7F3C;
-  --c-blue: #1B4FD8;
+  /* ── Brand palette (African flag colors) ───────────────────── */
+  --c-gold:   #FFDA44;
+  --c-red:    #E8412C;
+  --c-green:  #1A7F3C;
+  --c-blue:   #1B4FD8;
   --c-orange: #F97B22;
 
-  /* Intake / onboarding bg */
-  --c-intake-bg: #FFDA44;
+  /* ── Intake ─────────────────────────────────────────────────── */
+  --c-intake-bg:   #FFDA44;
   --c-intake-text: #111111;
 
-  /* Surfaces */
-  --c-bg: #0E0E0E;
-  --c-surface: #161616;
+  /* ── Surfaces ───────────────────────────────────────────────── */
+  --c-bg:       #0E0E0E;
+  --c-surface:  #161616;
   --c-surface2: #1F1F1F;
 
-  /* Text */
-  --c-text: #FFFFFF;
-  --c-text-muted: rgba(255, 255, 255, 0.45);
-  --c-text-subtle: rgba(255, 255, 255, 0.25);
+  /* ── Text — solid values only, no rgba opacity ──────────────── */
+  --c-text:        #FFFFFF;
+  --c-text-muted:  #AAAAAA;
+  --c-text-subtle: #6E6E6E;
 
-  /* Borders */
-  --c-border: rgba(255, 255, 255, 0.08);
-  --c-border-emphasis: rgba(255, 255, 255, 0.15);
+  /* ── Borders ────────────────────────────────────────────────── */
+  --c-border:          #1E1E1E;
+  --c-border-emphasis: #333333;
 
-  /* Layout */
-  --radius-card: 12px;
+  /* ── Layout ─────────────────────────────────────────────────── */
+  --radius-card: 16px;
   --radius-pill: 99px;
-  --radius-sm: 6px;
+  --radius-sm:   6px;
   --page-padding: 16px;
-  --max-width: 480px;
+  --max-width:   480px;
 
-  /* Spacing scale (4px base) */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-6: 24px;
-  --space-8: 32px;
+  /* ── Spacing (4px base) ─────────────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-6:  24px;
+  --space-8:  32px;
   --space-12: 48px;
+  --space-16: 64px;
 
-  /* Typography */
+  /* ── Type scale (dramatic — large jumps) ────────────────────── */
+  --text-2xs: 10px;
+  --text-xs:  12px;
+  --text-sm:  14px;
+  --text-base: 16px;
+  --text-lg:  20px;
+  --text-xl:  24px;
+  --text-2xl: 32px;
+  --text-3xl: 48px;
+  --text-4xl: 64px;
+  --text-5xl: 96px;
+
+  /* ── Fonts ──────────────────────────────────────────────────── */
   --font-display: 'Syne', system-ui, sans-serif;
-  --font-body: 'Switzer', system-ui, sans-serif;
+  --font-body:    'Switzer', system-ui, sans-serif;
+}
+
+/* ── Atomic type classes ─────────────────────────────────────────
+   Hierarchy via scale + weight, never via opacity.
+   All colors use solid tokens — restyle by updating vars.
+   ────────────────────────────────────────────────────────────── */
+
+/* Full-bleed hero — homepage, section openers */
+.t-hero {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 14vw, var(--text-5xl));
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  color: var(--c-text);
+}
+
+/* Large display — section titles, country names */
+.t-display {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 10vw, var(--text-4xl));
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  color: var(--c-text);
+}
+
+/* Card title — event name, card heading */
+.t-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--c-text);
+}
+
+/* Sub-heading — section label, card sub-title */
+.t-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--c-text);
+}
+
+/* Date callout — the big date on event cards */
+.t-date {
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-3xl), 11vw, 56px);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  color: var(--c-text);
+}
+
+/* Body — descriptions, main copy */
+.t-body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--c-text);
+}
+
+/* Label — caps nav items, category pills, tags */
+.t-label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-text);
+}
+
+/* Caption — metadata, timestamps, location */
+.t-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--c-text-muted);
+}
+
+/* Whisper — fine print, secondary metadata */
+.t-whisper {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--c-text-subtle);
+}
+
+/* Counter / stat — "3 EVENTS", "33 GAMES" */
+.t-counter {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
 }

@@ -31,3 +31,13 @@ a {
 .font-display {
   font-family: var(--font-display);
 }
+
+/* Hide scrollbar globally for scroll-snap containers */
+.scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* Desktop arrows — visible at ≥700px when card has room on sides */
+@media (min-width: 700px) {
+  .desktop-arrow {
+    display: flex !important;
+  }
+}

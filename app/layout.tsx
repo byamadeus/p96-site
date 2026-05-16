@@ -4,6 +4,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "P96 Culture House — WC2026",
   description: "Your game. Your people. Your summer.",
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    viewportFit: 'cover',
+  },
 };
 
 export default function RootLayout({

@@ -1,23 +1,11 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import P96Logo from '@/components/Layout/P96Logo'
 
-const PLAYBACK_ID = 'sMAbbc8JVvn202la005w0102yrGGLRT2JSsX9dapewP7HPw'
-
 export default function HomepageLayout() {
   const [hovered, setHovered] = useState<string | null>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
-
-  useEffect(() => {
-    import('@mux/mux-video').then(() => {
-      if (videoRef.current) {
-        videoRef.current.muted = true
-        videoRef.current.play().catch(() => {})
-      }
-    })
-  }, [])
 
   return (
     <div
@@ -27,25 +15,15 @@ export default function HomepageLayout() {
         background: '#0E0E0E',
       }}
     >
-      {/* Video container — overflow hidden here so content layer labels aren't clipped */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden' }}>
-        {/* @ts-expect-error mux-video web component */}
-        <mux-video
-          ref={videoRef}
-          playback-id={PLAYBACK_ID}
-          autoplay
-          loop
-          playsinline
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            opacity: 0.72,
-          }}
-        />
-      </div>
+      {/* Background image */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        backgroundImage: 'url(/capture-11.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        opacity: 0.85,
+      }} />
 
       {/* Dark scrim */}
       <div
@@ -73,11 +51,11 @@ export default function HomepageLayout() {
         </Link>
 
         {/* Bottom nav block */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 
           {/* EVENTS — active, hover fades slightly */}
           <Link
-            href="/calendar"
+            href="/wc2026"
             onMouseEnter={() => setHovered('events')}
             onMouseLeave={() => setHovered(null)}
             style={{
@@ -96,25 +74,7 @@ export default function HomepageLayout() {
             }}
           >
             <span style={{ fontSize: 'clamp(40px, 9vw, 64px)', textTransform: 'uppercase' }}>
-              EVENTS
-            </span>
-            <span
-              style={{
-                display: 'inline-block',
-                background: 'var(--c-gold)',
-                color: '#111',
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(11px, 2.2vw, 14px)',
-                fontWeight: 800,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                padding: '5px 12px',
-                borderRadius: 3,
-                verticalAlign: 'middle',
-                marginBottom: 4,
-              }}
-            >
-              2026 WORLD CUP
+              WORLD CUP
             </span>
           </Link>
 
