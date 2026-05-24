@@ -45,7 +45,7 @@ export default function HomepageLayout() {
 
           {/* WORLD CUP — active */}
           <Link
-            href="/wc2026"
+            href="/calendar"
             onMouseEnter={() => setHovered('events')}
             onMouseLeave={() => setHovered(null)}
             style={{
