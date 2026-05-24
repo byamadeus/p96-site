@@ -1,137 +1,125 @@
-'use client'
-
+import { Clock, MapPin } from 'lucide-react'
 import { Event, getCategoryMeta } from '@/lib/supabase'
 import { Match } from '@/data/matches'
 
-function fmtTime(t: string) {
+export function fmtTime(t: string): string {
   const [h, m] = t.split(':').map(Number)
-  return `${h % 12 || 12}:${m.toString().padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`
+  return `${h % 12 || 12}:${m.toString().padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'} EST`
 }
 
-interface EventCardProps {
+export function WhiteCard({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <div style={{
+      background: '#FFFFFF',
+      borderRadius: 16,
+      overflow: 'hidden',
+      display: 'flex', flexDirection: 'column',
+      boxShadow: '0 8px 40px rgba(0,0,0,0.13)',
+      ...style,
+    }}>
+      {children}
+    </div>
+  )
+}
+
+export function CardBody({ children }: { children: React.ReactNode }) {
+  return <div style={{ padding: '18px 20px 22px' }}>{children}</div>
+}
+
+export interface EventCardProps {
   event: Event
   match?: Match | null
-  wcMode?: boolean
-  selected?: boolean
-  onOpen: () => void
+  focal?: boolean
 }
 
-export default function EventCard({ event, match, wcMode, selected, onOpen }: EventCardProps) {
+export default function EventCard({ event, match, focal = false }: EventCardProps) {
   const meta = getCategoryMeta(event.category)
-  const isWatchParty = event.category === 'watch_party'
+  const imgHeight = focal ? 240 : 180
+  const titleSize = focal ? 22 : 17
 
   return (
-    <div
-      onClick={onOpen}
-      role="button"
-      tabIndex={0}
-      onKeyDown={e => e.key === 'Enter' && onOpen()}
-      style={{
-        padding: '14px 20px',
-        borderBottom: '1px solid var(--c-border)',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 12,
-        background: selected
-          ? 'rgba(255,255,255,0.04)'
-          : isWatchParty && wcMode
-          ? 'rgba(255,218,68,0.03)'
-          : 'transparent',
-        borderLeft: selected
-          ? `2px solid ${meta.color}`
-          : isWatchParty && wcMode
-          ? '2px solid rgba(255,218,68,0.4)'
-          : '2px solid transparent',
-        transition: 'background 0.12s',
-      }}
-    >
-      <div style={{ flex: 1, minWidth: 0 }}>
-        {/* Game badge */}
+    <WhiteCard style={{ width: focal ? 300 : 240 }}>
+      <div style={{
+        height: imgHeight,
+        background: event.flier_url
+          ? `url(${event.flier_url}) center/cover no-repeat`
+          : '#F2F2F2',
+        display: event.flier_url ? undefined : 'flex',
+        alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0,
+      }}>
+        {!event.flier_url && (
+          <span style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: focal ? 32 : 24, fontWeight: 800,
+            color: '#DADADA', letterSpacing: '-0.04em',
+          }}>
+            P96
+          </span>
+        )}
+      </div>
+
+      <div style={{ padding: focal ? '16px 20px 20px' : '12px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <span style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
+            textTransform: 'uppercase', color: meta.color, fontFamily: 'var(--font-body)',
+          }}>
+            {meta.label}
+          </span>
+          <span style={{ fontSize: 10, color: '#999', fontFamily: 'var(--font-body)', fontWeight: 500 }}>
+            {new Date(event.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase()}
+          </span>
+        </div>
+
         {match && (
-          <div
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.06em',
-              color: wcMode ? 'var(--c-gold)' : 'var(--c-text-subtle)',
-              marginBottom: 3,
-              fontFamily: 'var(--font-body)',
-              textTransform: 'uppercase',
-            }}
-          >
-            ⚽ {match.teamA.flag}{match.teamA.name} vs {match.teamB.flag}{match.teamB.name} · {match.kickoff}
+          <div style={{ fontSize: 10, fontWeight: 700, color: '#555', marginBottom: 6, fontFamily: 'var(--font-body)' }}>
+            ⚽ {match.teamA.flag} vs {match.teamB.flag} · {match.kickoff}
           </div>
         )}
 
-        {/* Title row */}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-          <span
-            style={{
-              fontSize: 15,
-              fontWeight: 700,
-              color: 'var(--c-text)',
-              lineHeight: 1.3,
-              fontFamily: 'var(--font-body)',
-            }}
-          >
-            {event.title}
-          </span>
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 700,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: meta.color,
-              flexShrink: 0,
-              fontFamily: 'var(--font-body)',
-            }}
-          >
-            {meta.label}
-          </span>
+        <h3 style={{
+          fontFamily: 'var(--font-display)', fontSize: titleSize, fontWeight: 800,
+          letterSpacing: '-0.03em', lineHeight: 1.15,
+          color: '#111', marginBottom: 10, flex: 1,
+        }}>
+          {event.title}
+        </h3>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 14 }}>
+          {event.time && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#555', fontFamily: 'var(--font-body)' }}>
+              <Clock size={11} strokeWidth={2} style={{ flexShrink: 0, color: '#888' }} />
+              {fmtTime(event.time)}
+            </div>
+          )}
+          {event.location_name && (
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 5, fontSize: 11, color: '#555', fontFamily: 'var(--font-body)' }}>
+              <MapPin size={11} strokeWidth={2} style={{ flexShrink: 0, marginTop: 1, color: '#888' }} />
+              <span>
+                {event.location_name}
+                {event.location_address && ` · ${event.location_address}`}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Meta */}
-        <div
-          style={{
-            fontSize: 12,
-            color: 'var(--c-text-muted)',
-            marginTop: 3,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 6,
-            flexWrap: 'wrap',
-          }}
-        >
-          {event.time && <span>{fmtTime(event.time)}</span>}
-          {event.time && event.location_name && <span style={{ opacity: 0.4 }}>·</span>}
-          {event.location_name && <span>{event.location_name}</span>}
-        </div>
+        {event.rsvp_url ? (
+          <a href={event.rsvp_url} target="_blank" rel="noopener noreferrer" style={{
+            display: 'block', padding: '11px', borderRadius: 8,
+            background: '#111', color: '#fff',
+            fontSize: 12, fontWeight: 800, textAlign: 'center',
+            textDecoration: 'none', fontFamily: 'var(--font-display)',
+            letterSpacing: '0.04em', textTransform: 'uppercase',
+          }}>
+            RSVP →
+          </a>
+        ) : (
+          <p style={{ fontSize: 11, color: '#999', fontFamily: 'var(--font-body)', textAlign: 'center', margin: 0 }}>
+            Free entry — no RSVP needed
+          </p>
+        )}
       </div>
-
-      {/* Location chip */}
-      {event.location_name && (
-        <div
-          style={{
-            flexShrink: 0,
-            padding: '5px 10px',
-            borderRadius: 'var(--radius-pill)',
-            border: '1px solid var(--c-border)',
-            fontSize: 11,
-            fontWeight: 500,
-            color: 'var(--c-text-muted)',
-            fontFamily: 'var(--font-body)',
-            whiteSpace: 'nowrap',
-            maxWidth: 120,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {event.location_name}
-        </div>
-      )}
-    </div>
+    </WhiteCard>
   )
 }

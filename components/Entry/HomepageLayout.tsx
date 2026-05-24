@@ -8,13 +8,7 @@ export default function HomepageLayout() {
   const [hovered, setHovered] = useState<string | null>(null)
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: '#0E0E0E',
-      }}
-    >
+    <div style={{ position: 'fixed', inset: 0, background: '#0E0E0E' }}>
       {/* Background image */}
       <div style={{
         position: 'absolute',
@@ -26,25 +20,21 @@ export default function HomepageLayout() {
       }} />
 
       {/* Dark scrim */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 100%)',
-        }}
-      />
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 100%)',
+      }} />
 
       {/* Content layer */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          padding: '28px 28px 24px',
-        }}
-      >
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: '28px 28px 24px',
+      }}>
         {/* Top: logo */}
         <Link href="/" aria-label="P96 home">
           <P96Logo color="#ffffff" height={22} />
@@ -53,7 +43,7 @@ export default function HomepageLayout() {
         {/* Bottom nav block */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 
-          {/* EVENTS — active, hover fades slightly */}
+          {/* WORLD CUP — active */}
           <Link
             href="/wc2026"
             onMouseEnter={() => setHovered('events')}
@@ -84,35 +74,31 @@ export default function HomepageLayout() {
             onMouseLeave={() => setHovered(null)}
             style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'default', userSelect: 'none' }}
           >
-            <span
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(40px, 9vw, 64px)',
-                fontWeight: 800,
-                lineHeight: 0.95,
-                letterSpacing: '-0.03em',
-                color: '#ffffff',
-                textTransform: 'uppercase',
-                opacity: hovered === 'shop' ? 0.35 : 1,
-                transition: 'opacity 0.2s',
-              }}
-            >
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(40px, 9vw, 64px)',
+              fontWeight: 800,
+              lineHeight: 0.95,
+              letterSpacing: '-0.03em',
+              color: '#ffffff',
+              textTransform: 'uppercase',
+              opacity: hovered === 'shop' ? 0.35 : 1,
+              transition: 'opacity 0.2s',
+            }}>
               SHOP
             </span>
-            <span
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: 'var(--c-gold)',
-                fontFamily: 'var(--font-body)',
-                whiteSpace: 'nowrap',
-                opacity: hovered === 'shop' ? 1 : 0,
-                transition: 'opacity 0.2s',
-                pointerEvents: 'none',
-              }}
-            >
+            <span style={{
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'var(--c-gold)',
+              fontFamily: 'var(--font-body)',
+              whiteSpace: 'nowrap',
+              opacity: hovered === 'shop' ? 1 : 0,
+              transition: 'opacity 0.2s',
+              pointerEvents: 'none',
+            }}>
               COMING SOON
             </span>
           </div>
@@ -123,72 +109,57 @@ export default function HomepageLayout() {
             onMouseLeave={() => setHovered(null)}
             style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'default', userSelect: 'none' }}
           >
-            <span
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(40px, 9vw, 64px)',
-                fontWeight: 800,
-                lineHeight: 0.95,
-                letterSpacing: '-0.03em',
-                color: '#ffffff',
-                textTransform: 'uppercase',
-                opacity: hovered === 'about' ? 0.35 : 1,
-                transition: 'opacity 0.2s',
-              }}
-            >
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(40px, 9vw, 64px)',
+              fontWeight: 800,
+              lineHeight: 0.95,
+              letterSpacing: '-0.03em',
+              color: '#ffffff',
+              textTransform: 'uppercase',
+              opacity: hovered === 'about' ? 0.35 : 1,
+              transition: 'opacity 0.2s',
+            }}>
               ABOUT
             </span>
-            <span
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: '0.14em',
-                textTransform: 'uppercase',
-                color: 'var(--c-gold)',
-                fontFamily: 'var(--font-body)',
-                whiteSpace: 'nowrap',
-                opacity: hovered === 'about' ? 1 : 0,
-                transition: 'opacity 0.2s',
-                pointerEvents: 'none',
-              }}
-            >
+            <span style={{
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'var(--c-gold)',
+              fontFamily: 'var(--font-body)',
+              whiteSpace: 'nowrap',
+              opacity: hovered === 'about' ? 1 : 0,
+              transition: 'opacity 0.2s',
+              pointerEvents: 'none',
+            }}>
               COMING SOON
             </span>
           </div>
         </div>
 
         {/* Footer bar */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <span
-            style={{
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.38)',
-              fontFamily: 'var(--font-body)',
-            }}
-          >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.38)',
+            fontFamily: 'var(--font-body)',
+          }}>
             P96 IS THE PLACE
           </span>
-          <a
-            href="mailto:info@p96.nyc"
-            style={{
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.38)',
-              fontFamily: 'var(--font-body)',
-              textDecoration: 'none',
-            }}
-          >
+          <a href="mailto:info@p96.nyc" style={{
+            fontSize: 10,
+            fontWeight: 600,
+            letterSpacing: '0.14em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.38)',
+            fontFamily: 'var(--font-body)',
+            textDecoration: 'none',
+          }}>
             STAY IN TOUCH
           </a>
         </div>

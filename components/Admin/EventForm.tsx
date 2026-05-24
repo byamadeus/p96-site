@@ -22,30 +22,32 @@ const EMPTY: Omit<Event, 'id' | 'created_at'> = {
 
 const input: React.CSSProperties = {
   width: '100%',
-  background: '#1a1a1a',
-  border: '1px solid rgba(255,255,255,0.1)',
-  borderRadius: 6,
+  background: '#FAFAFA',
+  border: '1px solid rgba(0,0,0,0.12)',
+  borderRadius: 8,
   padding: '10px 12px',
   fontSize: 14,
-  color: '#fff',
-  fontFamily: 'inherit',
+  color: '#111',
+  fontFamily: 'var(--font-body)',
   outline: 'none',
+  boxSizing: 'border-box',
 }
 
-const label: React.CSSProperties = {
+const labelStyle: React.CSSProperties = {
   fontSize: 11,
-  fontWeight: 600,
+  fontWeight: 700,
   letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: 'rgba(255,255,255,0.45)',
-  marginBottom: 4,
+  color: 'rgba(0,0,0,0.4)',
+  marginBottom: 5,
   display: 'block',
+  fontFamily: 'var(--font-body)',
 }
 
 function Field({ name, children }: { name: string; children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <span style={label}>{name}</span>
+      <span style={labelStyle}>{name}</span>
       {children}
     </div>
   )
@@ -53,11 +55,12 @@ function Field({ name, children }: { name: string; children: React.ReactNode }) 
 
 interface Props {
   existing?: Event
+  initialDate?: string
   onSaved: () => void
   onCancel?: () => void
 }
 
-export default function EventForm({ existing, onSaved, onCancel }: Props) {
+export default function EventForm({ existing, initialDate, onSaved, onCancel }: Props) {
   const [form, setForm] = useState<Omit<Event, 'id' | 'created_at'>>(
     existing
       ? {
@@ -74,7 +77,7 @@ export default function EventForm({ existing, onSaved, onCancel }: Props) {
           game_id: existing.game_id,
           is_published: existing.is_published,
         }
-      : { ...EMPTY }
+      : { ...EMPTY, date: initialDate ?? '' }
   )
 
   const [uploading, setUploading] = useState(false)
@@ -194,18 +197,24 @@ export default function EventForm({ existing, onSaved, onCancel }: Props) {
       <Field name="Flier image">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <input
-            style={{ ...input, padding: '8px 12px', fontSize: 13 }}
+            style={{ ...input, fontSize: 13 }}
             value={form.flier_url ?? ''}
             onChange={e => set('flier_url', e.target.value)}
-            placeholder="Paste URL or upload below"
+            placeholder="Paste image URL or upload below"
           />
-          <label style={{ ...label, cursor: 'pointer', padding: '8px 12px', background: '#1a1a1a', border: '1px dashed rgba(255,255,255,0.15)', borderRadius: 6, textAlign: 'center', textTransform: 'none', fontSize: 12 }}>
+          <label style={{
+            cursor: 'pointer', padding: '9px 12px',
+            background: '#FAFAFA', border: '1px dashed rgba(0,0,0,0.15)', borderRadius: 8,
+            textAlign: 'center', fontSize: 12, fontWeight: 600,
+            color: 'rgba(0,0,0,0.45)', letterSpacing: '0.06em',
+            fontFamily: 'var(--font-body)', textTransform: 'uppercase',
+          }}>
             {uploading ? 'Uploading…' : '+ Upload image'}
             <input type="file" accept="image/*" onChange={uploadFlier} style={{ display: 'none' }} />
           </label>
           {form.flier_url && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={form.flier_url} alt="Flier preview" style={{ width: '100%', borderRadius: 6, maxHeight: 200, objectFit: 'cover' }} />
+            <img src={form.flier_url} alt="Flier preview" style={{ width: '100%', borderRadius: 8, maxHeight: 200, objectFit: 'cover' }} />
           )}
         </div>
       </Field>
@@ -223,19 +232,21 @@ export default function EventForm({ existing, onSaved, onCancel }: Props) {
 
       {/* Additional links */}
       <div>
-        <span style={label}>Additional links</span>
+        <span style={labelStyle}>Additional links</span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {(form.additional_links ?? []).map((link, i) => (
             <div key={i} style={{ display: 'flex', gap: 8 }}>
               <input style={{ ...input, flex: '0 0 120px' }} placeholder="Label" value={link.label} onChange={e => updateLink(i, 'label', e.target.value)} />
               <input style={{ ...input, flex: 1 }} placeholder="https://…" value={link.url} onChange={e => updateLink(i, 'url', e.target.value)} />
-              <button type="button" onClick={() => removeLink(i)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.3)', cursor: 'pointer', padding: '0 4px', display: 'flex', alignItems: 'center' }}><X size={16} strokeWidth={2} /></button>
+              <button type="button" onClick={() => removeLink(i)} style={{ background: 'none', border: 'none', color: 'rgba(0,0,0,0.3)', cursor: 'pointer', padding: '0 4px', display: 'flex', alignItems: 'center' }}>
+                <X size={16} strokeWidth={2} />
+              </button>
             </div>
           ))}
           <button
             type="button"
             onClick={addLink}
-            style={{ alignSelf: 'flex-start', background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: 'rgba(255,255,255,0.45)', fontSize: 12, padding: '6px 12px', cursor: 'pointer', fontFamily: 'inherit' }}
+            style={{ alignSelf: 'flex-start', background: 'none', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 8, color: 'rgba(0,0,0,0.45)', fontSize: 12, fontWeight: 600, padding: '7px 12px', cursor: 'pointer', fontFamily: 'var(--font-body)' }}
           >
             + Add link
           </button>
@@ -247,43 +258,54 @@ export default function EventForm({ existing, onSaved, onCancel }: Props) {
         <div
           onClick={() => set('is_published', !form.is_published)}
           style={{
-            width: 44,
-            height: 24,
-            borderRadius: 12,
-            background: form.is_published ? '#1A7F3C' : '#333',
-            position: 'relative',
-            transition: 'background 0.2s',
-            flexShrink: 0,
+            width: 44, height: 24, borderRadius: 12,
+            background: form.is_published ? '#1A7F3C' : 'rgba(0,0,0,0.12)',
+            position: 'relative', transition: 'background 0.2s', flexShrink: 0,
           }}
         >
           <div style={{
-            position: 'absolute',
-            top: 3,
+            position: 'absolute', top: 3,
             left: form.is_published ? 23 : 3,
-            width: 18,
-            height: 18,
-            borderRadius: '50%',
-            background: '#fff',
-            transition: 'left 0.2s',
+            width: 18, height: 18, borderRadius: '50%',
+            background: '#fff', transition: 'left 0.2s',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
           }} />
         </div>
-        <span style={{ fontSize: 13, color: form.is_published ? '#fff' : 'rgba(255,255,255,0.45)' }}>
-          {form.is_published ? 'Published' : 'Draft'}
+        <span style={{ fontSize: 13, fontWeight: 600, fontFamily: 'var(--font-body)', color: form.is_published ? '#1A7F3C' : 'rgba(0,0,0,0.45)' }}>
+          {form.is_published ? 'Publish immediately' : 'Save as draft'}
         </span>
       </label>
 
-      {error && <p style={{ fontSize: 13, color: '#E8412C' }}>{error}</p>}
+      {error && <p style={{ fontSize: 13, color: '#E8412C', fontFamily: 'var(--font-body)' }}>{error}</p>}
 
-      <div style={{ display: 'flex', gap: 10, paddingTop: 8 }}>
+      <div style={{ display: 'flex', gap: 10, paddingTop: 4 }}>
         <button
           type="submit"
           disabled={saving || uploading}
-          style={{ flex: 1, padding: '12px', background: '#F5C842', color: '#000', border: 'none', borderRadius: 99, fontSize: 14, fontWeight: 700, fontFamily: 'inherit', cursor: 'pointer' }}
+          style={{
+            flex: 1, padding: '13px',
+            background: '#111', color: '#fff',
+            border: 'none', borderRadius: 99,
+            fontSize: 13, fontWeight: 800,
+            fontFamily: 'var(--font-display)',
+            letterSpacing: '0.04em', textTransform: 'uppercase',
+            cursor: saving || uploading ? 'default' : 'pointer',
+            opacity: saving || uploading ? 0.6 : 1,
+          }}
         >
-          {saving ? 'Saving…' : existing ? 'Save changes' : 'Create event'}
+          {saving ? 'Saving…' : existing ? 'Save Changes' : 'Create Event'}
         </button>
         {onCancel && (
-          <button type="button" onClick={onCancel} style={{ padding: '12px 20px', background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 99, color: 'rgba(255,255,255,0.45)', fontSize: 14, fontFamily: 'inherit', cursor: 'pointer' }}>
+          <button
+            type="button"
+            onClick={onCancel}
+            style={{
+              padding: '13px 20px', background: 'none',
+              border: '1px solid rgba(0,0,0,0.12)', borderRadius: 99,
+              color: 'rgba(0,0,0,0.45)', fontSize: 13,
+              fontFamily: 'var(--font-body)', cursor: 'pointer',
+            }}
+          >
             Cancel
           </button>
         )}
