@@ -9,7 +9,7 @@ import Navbar from '@/components/Layout/Navbar'
 import P96Logo from '@/components/Layout/P96Logo'
 import ShimmerBar from '@/components/Layout/ShimmerBar'
 import PageFooter from '@/components/Layout/PageFooter'
-import EventCard, { fmtTime } from '@/components/Calendar/EventCard'
+import EventCard from '@/components/Calendar/EventCard'
 
 const YEAR = 2026
 const MIN_MONTH = 6

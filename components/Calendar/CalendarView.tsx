@@ -70,16 +70,6 @@ export default function CalendarView({ events }: { events: Event[] }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const filteredEvents = events.filter(e => {
-    if (store.activeNations.length === 0) return true
-    if (!e.game_id) return true
-    const match = getMatchForEvent(e)
-    if (!match) return true
-    return (
-      store.activeNations.includes(match.teamA.code) ||
-      store.activeNations.includes(match.teamB.code)
-    )
-  })
 
   const allEventDates = new Set(events.map(e => e.date))
 
