@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import P96Logo from '@/components/Layout/P96Logo'
@@ -9,11 +9,33 @@ interface LeadCaptureModalProps {
   onClose: () => void
 }
 
+const NATIONS = [
+  { code: 'MA', flag: '🇲🇦', name: 'Morocco' },
+  { code: 'SN', flag: '🇸🇳', name: 'Senegal' },
+  { code: 'GH', flag: '🇬🇭', name: 'Ghana' },
+  { code: 'EG', flag: '🇪🇬', name: 'Egypt' },
+  { code: 'DZ', flag: '🇩🇿', name: 'Algeria' },
+  { code: 'CI', flag: '🇨🇮', name: 'Ivory Coast' },
+  { code: 'TN', flag: '🇹🇳', name: 'Tunisia' },
+  { code: 'ZA', flag: '🇿🇦', name: 'South Africa' },
+  { code: 'CD', flag: '🇨🇩', name: 'DR Congo' },
+  { code: 'CV', flag: '🇨🇻', name: 'Cape Verde' },
+  { code: 'HT', flag: '🇭🇹', name: 'Haiti' },
+  { code: 'CW', flag: '🇨🇼', name: 'Curaçao' },
+]
+
 export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
+  const [country, setCountry] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
+  const [countryOpen, setCountryOpen] = useState(false)
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
 
   async function submit() {
     if (!email) return
@@ -21,7 +43,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
     await supabase.from('intake').insert({
       email,
       phone: phone || null,
-      country: null,
+      country: country || null,
       borough: null,
     })
     setLoading(false)
@@ -55,14 +77,9 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
       />
 
       <div
+        className="modal-panel"
         style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 'min(440px, calc(100vw - 32px))',
           background: 'var(--c-surface)',
-          borderRadius: 16,
           border: '1px solid var(--c-border-emphasis)',
           padding: '28px 28px 32px',
           zIndex: 201,
@@ -135,7 +152,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
             </h2>
             <p
               style={{
-                fontSize: 16,
+                fontSize: 14,
                 color: 'var(--c-text-muted)',
                 lineHeight: 1.55,
                 marginBottom: 28,
@@ -183,14 +200,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
                 }}
               >
                 Phone{' '}
-                <span
-                  style={{
-                    fontWeight: 400,
-                    textTransform: 'none',
-                    letterSpacing: 0,
-                    opacity: 0.55,
-                  }}
-                >
+                <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, opacity: 0.55 }}>
                   (optional)
                 </span>
               </div>
@@ -202,6 +212,79 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
                 style={inputStyle}
               />
             </label>
+
+            {/* Who you repping — hidden for launch, re-enable when ready */}
+            {false && <div style={{ marginBottom: 24 }}>
+              <div style={{
+                fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
+                color: 'var(--c-text-muted)', textTransform: 'uppercase',
+                fontFamily: 'var(--font-body)', marginBottom: 6,
+              }}>
+                Who you repping?{' '}
+                <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, opacity: 0.55 }}>(optional)</span>
+              </div>
+
+              {/* Trigger */}
+              <button
+                onClick={() => setCountryOpen(o => !o)}
+                style={{
+                  ...inputStyle,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  textAlign: 'left',
+                }}
+              >
+                <span>
+                  {country
+                    ? `${NATIONS.find(n => n.code === country)?.flag} ${NATIONS.find(n => n.code === country)?.name}`
+                    : 'Select your country'}
+                </span>
+                <span style={{ opacity: 0.4, fontSize: 12 }}>{countryOpen ? '▲' : '▼'}</span>
+              </button>
+
+              {/* Expanded list */}
+              {countryOpen && (
+                <div style={{
+                  border: '1px solid var(--c-border-emphasis)',
+                  borderTop: 'none',
+                  borderRadius: '0 0 8px 8px',
+                  maxHeight: 220,
+                  overflowY: 'auto',
+                  background: 'var(--c-surface2)',
+                }}>
+                  {NATIONS.map(({ code, flag, name }) => {
+                    const selected = country === code
+                    return (
+                      <button
+                        key={code}
+                        onClick={() => setCountry(selected ? null : code)}
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 10,
+                          padding: '11px 14px',
+                          background: selected ? 'var(--c-text)' : 'transparent',
+                          color: selected ? 'var(--c-bg)' : 'var(--c-text)',
+                          border: 'none',
+                          borderBottom: '1px solid var(--c-border)',
+                          cursor: 'pointer',
+                          fontFamily: 'var(--font-body)',
+                          fontSize: 15,
+                          textAlign: 'left',
+                        }}
+                      >
+                        <span style={{ fontSize: 20 }}>{flag}</span>
+                        <span>{name}</span>
+                        {selected && <span style={{ marginLeft: 'auto', fontSize: 12 }}>✓</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>}
 
             <button
               onClick={submit}
@@ -225,21 +308,6 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
               {loading ? 'Saving...' : 'NOTIFY ME →'}
             </button>
 
-            <button
-              onClick={onClose}
-              style={{
-                width: '100%',
-                padding: '10px',
-                background: 'none',
-                border: 'none',
-                color: 'var(--c-text-subtle)',
-                fontSize: 13,
-                fontFamily: 'var(--font-body)',
-                cursor: 'pointer',
-              }}
-            >
-              Not now
-            </button>
           </>
         )}
       </div>

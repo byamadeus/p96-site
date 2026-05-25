@@ -130,6 +130,11 @@ export default function WorldCupLanding() {
             }}>
               Diaspora<br />World Cup<br />Activation<br />Series
             </h1>
+            <p style={{ backgroundColor: '#000000', padding: '2px 4px',
+              fontFamily: 'var(--font-body)', fontSize: 11,
+              letterSpacing: '0.09em', textTransform: 'uppercase', fontWeight: 700,
+              color: '#ffffffd3', opacity: 1, marginBottom: 6,
+            }}>NYC • New York City</p>
 
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
@@ -140,8 +145,8 @@ export default function WorldCupLanding() {
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 11,
               letterSpacing: '0.09em', textTransform: 'uppercase',
-              color: '#0E0E0E', opacity: 0.38, marginBottom: 28,
-            }}>June – July 2026 · New York City</p>
+              color: '#0E0E0E', opacity: 0.55, marginBottom: 24,
+            }}>June – July 2026</p>
 
             <button onClick={() => setShowModal(true)} style={{
               background: '#0E0E0E', color: '#FFFFFF', border: 'none', borderRadius: 4,
