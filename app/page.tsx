@@ -99,7 +99,7 @@ export default function WorldCupLanding() {
           </div>
         </div>
 
-        <div style={{
+        <div className="landing-content" style={{
           position: 'relative', zIndex: 1,
           maxWidth: 1200, margin: '0 auto', padding: '48px',
           minHeight: '100dvh', boxSizing: 'border-box',

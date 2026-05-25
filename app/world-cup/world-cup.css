@@ -10,10 +10,13 @@
 
 @media (max-width: 768px) {
   .wheel-container {
-    left: 65%;
-    top: 24%;
+    left: 68%;
+    top: 17%;
     transform: translate(-50%, 0);
-    width: min(200px, 37vw);
-    height: min(200px, 37vw);
+    width: min(200px, 30vw);
+    height: min(200px, 30vw);
+  }
+  .landing-content {
+    padding: 16px;
   }
 }

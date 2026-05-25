@@ -36,7 +36,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
     border: '1px solid var(--c-border-emphasis)',
     borderRadius: 8,
     color: 'var(--c-text)',
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'var(--font-body)',
     outline: 'none',
     boxSizing: 'border-box',
@@ -135,7 +135,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
             </h2>
             <p
               style={{
-                fontSize: 14,
+                fontSize: 16,
                 color: 'var(--c-text-muted)',
                 lineHeight: 1.55,
                 marginBottom: 28,
@@ -213,7 +213,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
                 color: email ? 'var(--c-bg)' : 'var(--c-text-subtle)',
                 border: 'none',
                 borderRadius: 8,
-                fontSize: 14,
+                fontSize: 16,
                 fontWeight: 800,
                 fontFamily: 'var(--font-display)',
                 letterSpacing: '-0.01em',
