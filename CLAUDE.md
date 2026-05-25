@@ -5,33 +5,27 @@
 
 ## What we're building
 
-A mobile-first community event portal for **P96 Culture House** centered on the 2026 FIFA World Cup. The site serves the Black diaspora community in NYC — helping people find where to watch diaspora nations play, discover P96-hosted events, and connect with their community during the tournament.
+Mobile-first community event portal for **P96 Culture House** centered on the 2026 FIFA World Cup. Serves the Black diaspora community in NYC — find where to watch diaspora nations play, discover P96-hosted events, connect with community.
 
-The user journey: **Instagram → Site → World Cup 2026 → Choose your country → Event cards → RSVP → Show up.**
+User journey: **Instagram → Site → WORLD CUP → Calendar → Pick date → Event card → RSVP → Show up.**
 
-This is a pro bono sprint. Keep decisions lean, cheap, and fast to ship.
+Pro bono sprint. Decisions lean, cheap, fast to ship.
 
 ---
 
 ## Site structure
 
 ```
-/                   → Homepage (full-screen Mux video hero + nav overlay)
-/wc2026             → WC2026 country selector (soccer ball grid, 10 diaspora nations)
-/wc2026/[country]   → Nation events page (full-screen swipeable cards, shareable URL)
-/calendar           → Unified calendar — BURIED (not in nav, exists for admin/direct link)
-/about              → (ghost page, P2)
-/shop               → (ghost page, P2)
-/admin              → Admin panel (P96 team only, password-protected)
+/                   → Homepage (Capture 11 photo, dark overlay, nav links)
+/calendar           → PRIMARY user-facing calendar (light mode, event cards)
+/wc2026             → WC2026 country selector (soccer ball grid, 12 diaspora nations)
+/wc2026/[country]   → Nation events page (swipeable cards, shareable URL)
+/about              → Ghost page (P2)
+/shop               → Ghost page (P2)
+/admin              → Admin panel (Supabase auth, event CRUD)
 ```
 
-### WC2026 flow
-- `/wc2026` — soccer ball pentagon grid, 10 nations (HT + CW TBD), P96 logo center
-- `/wc2026/[country]` — events filtered by game_id → matches.ts lookup + general cultural events
-- SVGs live in `public/teams/` — 10 position files (top-middle, top-left, etc.)
-- Position → nation mapping is in `components/WC/CountrySelector.tsx`
-- Event cards: full-screen, CSS scroll-snap horizontal, date = hero element
-- Desktop: trading card feel, prev/next arrows outside card, max-width 440px
+**Flow:** Homepage WORLD CUP link → `/calendar` (not `/wc2026`). Do not change this.
 
 ---
 
@@ -40,66 +34,155 @@ This is a pro bono sprint. Keep decisions lean, cheap, and fast to ship.
 | Layer | Choice | Notes |
 |---|---|---|
 | Framework | Next.js 14 (App Router) | |
-| Styling | CSS custom properties | Tokens in `styles/tokens.css`. Tailwind removed. |
+| Styling | CSS custom properties | Tokens in `styles/tokens.css`. No Tailwind. |
 | Database | Supabase | Free tier, Postgres + auth |
 | CMS / Admin | Custom `/admin` page | Event CRUD, flier upload, RSVP links |
 | Fonts | Syne (display) + Switzer (body) | `@fontsource/syne` + Fontshare CDN |
-| Video | Mux (`@mux/mux-video` web component) | Playback ID: `sMAbbc8JVvn202la005w0102yrGGLRT2JSsX9dapewP7HPw` |
-| Icons | Lucide React | Replaces all emoji icons except ⚽ and flag emojis |
+| Icons | Lucide React | All UI chrome. Keep ⚽ and flag emojis only. |
 | Mobile drawer | Vaul | Bottom sheet for event detail on mobile |
-| State | Zustand (`lib/store.ts`) | wcMode, activeCategory, activeNations, activeBorough, intake |
+| State | Zustand (`lib/store.ts`) | activeNations, activeBorough, intake |
 | Game data | Static seed (`/data/matches.ts`) | 33 diaspora matches, group → semi |
 | Deployment | Vercel | Free tier |
+
+**Removed:** Mux video (homepage is now static photo). WC mode toggle removed from calendar.
 
 ---
 
 ## Design system
 
 ### Philosophy
-Dark, warm, bold. African flag palette. Big type. Feels like a cultural moment, not a sports app. Mobile-first — max content width 480px on inner pages. Homepage is full-screen, no max-width.
+Light mode on inner pages (white, cream, warm). Homepage stays dark. Bold display type. African flag palette accents. Mobile-first — max content width 480px on inner pages.
+
+### Light mode pattern (calendar, admin)
+- `document.documentElement.style.backgroundColor = '#FFFFFF'` set on mount
+- `background: '#FFFFFF'` on root container
+- Navbar: `<Navbar light />` — switches colors to dark-on-light
+- Header gradient: `linear-gradient(180deg, #FFFBEF 0%, #FFFFFF 100%)`
+- Footer: `<PageFooter />` — always white bg
 
 ### Two-font system
 - `--font-display`: Syne — headlines, nav, big UI moments (800 weight)
 - `--font-body`: Switzer — body copy, labels, metadata (400–700)
 
-### CSS tokens (`/styles/tokens.css`)
+### Key CSS tokens (`/styles/tokens.css`)
 ```css
-:root {
-  --c-gold: #FFDA44;
-  --c-red: #E8412C;
-  --c-green: #1A7F3C;
-  --c-blue: #1B4FD8;
-  --c-orange: #F97B22;
-
-  --c-intake-bg: #FFDA44;
-  --c-intake-text: #111111;
-
-  --c-bg: #0E0E0E;
-  --c-surface: #161616;
-  --c-surface2: #1F1F1F;
-
-  --c-text: #FFFFFF;
-  --c-text-muted: rgba(255, 255, 255, 0.45);
-  --c-text-subtle: rgba(255, 255, 255, 0.25);
-
-  --c-border: rgba(255, 255, 255, 0.08);
-  --c-border-emphasis: rgba(255, 255, 255, 0.15);
-
-  --radius-card: 12px;
-  --radius-pill: 99px;
-  --radius-sm: 6px;
-  --page-padding: 16px;
-  --max-width: 480px;
-
-  --font-display: 'Syne', system-ui, sans-serif;
-  --font-body: 'Switzer', system-ui, sans-serif;
-}
+--c-gold: #FFDA44;
+--c-red: #E8412C;
+--c-green: #1A7F3C;
+--c-blue: #1B4FD8;
+--c-orange: #F97B22;
+--c-bg: #0E0E0E;
+--c-text: #FFFFFF;
+--max-width: 480px;
+--font-display: 'Syne', system-ui, sans-serif;
+--font-body: 'Switzer', system-ui, sans-serif;
 ```
 
-### Event categories (replaces old type field)
+### Event categories
 `watch_party` | `talks` | `workshop` | `hangout` | `collaboration` | `film_screening`
 
-Colors defined in `lib/supabase.ts` → `CATEGORY_META`. Use `getCategoryMeta(cat)` — safe fallback for unknown values.
+Always use `getCategoryMeta(cat)` — never `CATEGORY_META[cat]` directly (safe fallback for unknowns).
+
+---
+
+## Atomic components (shared, single source of truth)
+
+| Component | Path | Purpose |
+|---|---|---|
+| `ShimmerBar` | `components/Layout/ShimmerBar.tsx` | 3px gold→red gradient bar + keyframe |
+| `PageFooter` | `components/Layout/PageFooter.tsx` | Light footer. Props: `label`, `showContact`, `showDevReset` |
+| `EventCard` | `components/Calendar/EventCard.tsx` | Card visual. Exports: `WhiteCard`, `CardBody`, `fmtTime` |
+| `Navbar` | `components/Layout/Navbar.tsx` | Prop: `light?: boolean` — switches to dark-on-light |
+| `CalendarGrid` | `components/Calendar/CalendarGrid.tsx` | Props: `light`, `adminMode`, `compact` |
+| `DateStrip` | `components/Calendar/CalendarGrid.tsx` | Sidebar date column for view mode |
+
+**Rule:** if adding a UI element used in 2+ places, extract it. Don't duplicate shimmer divs, footer markup, card visuals, etc.
+
+---
+
+## Calendar (`/calendar`)
+
+### Visual states (date cells)
+1. **Active** — has published events: gold gradient bg, amber text, pointer cursor
+2. **Accented-disabled** — in `PRIORITY_DATES` but no events: light gold tint, lock icon (top-right), pointer cursor → opens lead capture
+3. **Disabled** — no events, not priority: muted text, default cursor, not clickable
+
+`PRIORITY_DATES` = 16 WC match days in June 2026 (defined in `CalendarGrid.tsx`).
+
+### Month navigation
+- State: `const [month, setMonth] = useState(MIN_MONTH)` where `MIN_MONTH = 6`, `MAX_MONTH = 7`
+- Chevron buttons in header right slot — disabled at bounds
+- Switching month resets `selectedDate` and closes view mode
+
+### Browse mode → View mode
+- Clicking active date → sets `selectedDate`, enters view mode (desktop full-screen overlay)
+- View mode: shimmer bar + top bar (back + date label + logo + event count) + body (DateStrip sidebar 64px | EventCarousel)
+- Mobile: Vaul bottom sheet drawer (88dvh, white bg) with scroll-snap carousel
+
+### Lead capture
+- Only fires when clicking priority date with no published events
+- `LeadCaptureModal` — email + phone form, saves to Supabase `intake` table + cookie
+- **NOT shown on homepage load** — intake modal on homepage is disabled
+
+### Key files
+- `components/Calendar/CalendarView.tsx` — main orchestrator
+- `components/Calendar/CalendarGrid.tsx` — grid + DateStrip + PRIORITY_DATES
+- `components/Calendar/EventCarousel.tsx` — desktop 3-card carousel + mobile scroll-snap
+- `components/Calendar/EventCard.tsx` — card visual (shared with admin)
+- `components/Calendar/LeadCaptureModal.tsx` — lead capture form
+
+---
+
+## Admin panel (`/admin`)
+
+Mirrors the user calendar experience exactly — same grid, same card visual, same view mode layout. "Mirror experience: user sees, admin audits and edits."
+
+### Calendar tab
+- `<CalendarGrid adminMode />` — all 30 dates clickable (any date can receive new events)
+- Clicking date → view mode with admin event cards
+- Empty date → "No events / Create Event" prompt
+- `PRIORITY_DATES` shown with gold tint but no lock icon in adminMode
+
+### View mode (admin)
+Same layout as user view mode. Right area shows `AdminEventCard` per event:
+- Shared `<EventCard />` visual (identical to public)
+- Admin controls below: `○ DRAFT / ● LIVE` toggle | Edit | Delete
+
+### All Events tab
+Flat list sorted by date. Per row: category dot · title · date · DRAFT/LIVE pill (click to toggle) · Edit · Delete.
+
+### Form modal
+- Sheet from bottom, white bg, max-height 92dvh
+- `<EventForm>` — light theme inputs, `initialDate` prop pre-fills date when creating from calendar
+- All new events: `is_published: false` (draft) by default
+
+### Month nav
+Same Jun/Jul chevron nav as user calendar, shown in tab bar right slot (only on Calendar tab).
+
+### Key files
+- `components/Admin/AdminDashboard.tsx` — all admin UI
+- `components/Admin/EventForm.tsx` — create/edit form (light theme)
+- `components/Admin/AdminLogin.tsx` — Supabase auth gate
+
+---
+
+## Homepage (`/`)
+
+Full-screen static photo (`/public/capture-11.jpg`), dark gradient scrim, content overlay. No video.
+
+- Top-left: P96 SVG logo → `/`
+- Bottom: **WORLD CUP** → `/calendar` | **SHOP** (coming soon) | **ABOUT** (coming soon)
+- SHOP + ABOUT: "COMING SOON" fades in on hover
+- Footer: "P96 IS THE PLACE" · "STAY IN TOUCH" (mailto)
+- **No intake modal on load** — disabled. Lead capture is calendar-only.
+
+---
+
+## Navbar (inner pages)
+
+`components/Layout/Navbar.tsx` — always takes `light?: boolean`.
+
+Right links: **EVENTS** → `/calendar` · **SHOP** → `/shop` · **ABOUT** → `/about` · Bug icon → `/admin`
 
 ---
 
@@ -111,7 +194,7 @@ id              uuid primary key default gen_random_uuid()
 created_at      timestamptz default now()
 title           text not null
 description     text
-category        text not null  -- watch_party | talks | workshop | hangout | collaboration | film_screening
+category        text not null
 date            date not null
 time            time
 location_name   text
@@ -119,92 +202,21 @@ location_address text
 flier_url       text
 rsvp_url        text
 additional_links jsonb   -- [{label, url}, ...]
-game_id         integer  -- links to match in /data/matches.ts (nullable)
+game_id         integer  -- nullable, links to /data/matches.ts
 is_published    boolean default false
 ```
 
+Published events = visible to users. Draft events = admin-only. Gate for calendar date states is `is_published`.
+
 ### `intake` table
 ```sql
-id              uuid primary key default gen_random_uuid()
-created_at      timestamptz default now()
-email           text not null
-phone           text
-country         text   -- first selected nation only (multi-select lives in cookie)
-borough         text
+id          uuid primary key default gen_random_uuid()
+created_at  timestamptz default now()
+email       text not null
+phone       text
+country     text
+borough     text
 ```
-
-**Known gap:** intake table `country` is a single text column; cookie stores full `nations[]` array. Multi-nation picks beyond first are only in the cookie.
-
----
-
-## Intake flow
-
-3-step modal on first visit (`p96_intake` cookie absent):
-1. **Nations** — multi-select, 12 diaspora nations, 3-col grid
-2. **Borough** — 27 pill options (Bronx, Brooklyn, Manhattan, etc.)
-3. **Email + phone** — email required to submit; phone optional; skip available
-
-Data stored in:
-- `p96_intake` cookie (180-day expiry) — full payload incl. all nations
-- Supabase `intake` table — only if email provided, only first nation
-
-Cookie reset: small `RotateCcw` icon in calendar footer (dev tool). Clears cookie + reloads.
-
----
-
-## Calendar — unified model
-
-### Modes
-- **WC MODE** (default ON) — gold/red shimmer accent bar, nation filter chips visible, category locked to `watch_party`, filtered by active nations
-- **All Events** — all published events, all categories, date-grouped
-
-### Filter state (Zustand `lib/store.ts`)
-- `wcMode: boolean` — default `true`
-- `activeCategory: EventCategory | null`
-- `activeNations: string[]` — 2-letter codes
-- `activeBorough: string | null`
-- `intake: IntakeData` — loaded from cookie on mount
-
-### URL sync
-Filters encode to URL params: `?n=GH,SN&b=Brooklyn&cat=watch_party&wc=1`
-"Save Filter" button (Share2 icon) copies current URL to clipboard.
-
-### Layout
-- **Mobile**: single column list → Vaul bottom sheet drawer for event detail
-- **Desktop**: 3-col (256px filters | flex-1 list | 320px detail panel)
-
-### Seed events
-`/data/seedEvents.ts` — 14 events across all categories, always merged under real DB events (deduped by title). Visible on prod until replaced by real admin-posted events.
-
----
-
-## Homepage
-
-Full-screen static image background (`/public/capture-11.jpg`), dark gradient scrim, content overlay.
-
-- Top-left: P96 SVG logo (links to `/`)
-- Bottom: WORLD CUP (links to `/wc2026`) / SHOP / ABOUT — 4px gap between items
-- SHOP + ABOUT: "COMING SOON" label fades in on hover
-- Footer bar: "P96 IS THE PLACE" · "STAY IN TOUCH" (mailto)
-
----
-
-## Navbar (inner pages)
-
-Minimal: P96 logo left → `/`. Right: SHOP · ABOUT at 10px allcaps muted + Bug icon → `/admin`. EVENTS removed from nav.
-
----
-
-## Admin panel (`/admin`)
-
-Password-protected (Supabase auth). Event CRUD — create/edit/delete, flier upload to Supabase storage, publish toggle, optional game_id attachment.
-
----
-
-## World Cup data
-
-`/data/matches.ts` — 33 diaspora-relevant match objects (group → semi). The 12 diaspora nations:
-🇿🇦 South Africa · 🇲🇦 Morocco · 🇸🇳 Senegal · 🇩🇿 Algeria · 🇨🇻 Cape Verde · 🇪🇬 Egypt · 🇹🇳 Tunisia · 🇨🇮 Ivory Coast · 🇬🇭 Ghana · 🇨🇩 DR Congo · 🇭🇹 Haiti · 🇨🇼 Curaçao
 
 ---
 
@@ -212,47 +224,85 @@ Password-protected (Supabase auth). Event CRUD — create/edit/delete, flier upl
 
 - Supabase project: `zzajjlmesdnoeeobhlkh.supabase.co`
 - RLS: anon = read published events + insert intake. Authenticated = full access.
-- Storage bucket `fliers` — create manually in Supabase dashboard (public bucket).
+- Storage bucket `fliers` — public bucket, manually created in Supabase dashboard.
 - Admin user — create manually: Supabase Dashboard → Authentication → Users → Add user.
 - Vercel env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 ---
 
-## Current state (as of May 10, 2026)
+## World Cup data
+
+`/data/matches.ts` — 33 diaspora-relevant match objects. 12 diaspora nations:
+🇿🇦 South Africa · 🇲🇦 Morocco · 🇸🇳 Senegal · 🇩🇿 Algeria · 🇨🇻 Cape Verde · 🇪🇬 Egypt · 🇹🇻 Tunisia · 🇨🇮 Ivory Coast · 🇬🇭 Ghana · 🇨🇩 DR Congo · 🇭🇹 Haiti · 🇨🇼 Curaçao
+
+`/data/seedEvents.ts` — seed events merged with DB events on calendar page. Remove when real events exist.
+
+---
+
+## Current state (as of May 25, 2026)
 
 | Route | Status |
 |---|---|
-| `/` | Full-screen Mux video homepage, agency-style nav, hover states |
-| `/calendar` | 3-col desktop + Vaul mobile, WC mode default, URL filter sync, seed events |
-| `/admin` | Event CRUD, flier upload, publish toggle |
-
-**Key files:**
-- `components/Entry/HomepageLayout.tsx` — homepage (EVENTS → /wc2026)
-- `components/Entry/IntakeModal.tsx` — 3-step intake modal
-- `components/WC/CountrySelector.tsx` — /wc2026 soccer ball grid
-- `components/WC/NationEventsPage.tsx` — /wc2026/[country] swipeable cards
-- `components/Calendar/CalendarView.tsx` — buried calendar (still works, not in nav)
-- `components/Layout/Navbar.tsx` — inner page nav (EVENTS removed)
-- `lib/store.ts` — Zustand store
-- `lib/supabase.ts` — DB client + category types + `getCategoryMeta()`
-- `lib/nations.ts` — 12 nations + 27 boroughs
-- `data/matches.ts` — 33 diaspora WC matches
-- `data/seedEvents.ts` — 14 seed events
-- `styles/tokens.css` — design tokens + atomic type classes (.t-hero, .t-display, etc.)
-- `public/teams/` — 10 flag SVGs for soccer ball grid
+| `/` | Static photo homepage, dark overlay, nav to /calendar |
+| `/calendar` | Light mode, 3 date states, Jun/Jul nav, mobile scroll-snap, lead capture |
+| `/admin` | Calendar-mirrored UI, draft/live workflow, form modal, all-events list |
+| `/wc2026` | Country selector (soccer ball grid) |
+| `/wc2026/[country]` | Nation events swipeable cards |
 
 ---
 
-## Notes for Claude Code sessions
+## Working conventions (established this session)
 
-- Mobile-first. Design for 390px viewport, enhance for larger.
-- Use CSS tokens, not hardcoded hex values in components.
-- `getCategoryMeta(cat)` not `CATEGORY_META[cat]` — safe fallback for unknown values.
-- Event drawer is Vaul bottom sheet on mobile, right panel on desktop — single `EventDetail` component for both.
-- Admin panel: functional over pretty.
-- When in doubt, ship the simpler version. This is a sprint.
-- Lucide icons for all UI chrome. Keep ⚽ and flag emojis.
+### Component decisions
+- **Extract when used 2+ places.** No inline duplication of shimmer bars, footers, card markup.
+- **`adminMode` prop on CalendarGrid** makes all dates clickable, hides lock icons.
+- **`light` prop on Navbar** for dark-on-light inner pages.
+- **EventCard is the canonical card.** Admin wraps it with controls below; don't re-implement visually.
+
+### Calendar architecture
+- `eventsForDate` uses raw `events` (not filtered) — nations filter hidden, don't re-add filtering there.
+- `allEventDates` = `new Set(events.map(e => e.date))` — drives which dates are "active".
+- Admin fetches ALL events (no `is_published` filter). User calendar fetches only published.
+
+### Month navigation pattern
+```tsx
+const [month, setMonth] = useState(MIN_MONTH) // MIN=6, MAX=7
+// Chevron buttons:
+onClick={() => { setMonth(m => m - 1); setSelectedDate(null); setViewMode(false) }}
+disabled={month === MIN_MONTH}
+```
+
+### Lead capture flow
+Priority date clicked + no events → `setShowLeadCapture(true)`. Never show intake on homepage load.
+
+### Git workflow
+- TypeScript check (`npx tsc --noEmit`) before every commit.
+- ESLint check (`npx next lint`) before pushing — Vercel treats lint errors as build failures.
+- Pull/rebase before pushing when behind origin. Resolve conflicts by preserving our intended state.
+
+### Light mode page setup
+```tsx
+useEffect(() => {
+  document.documentElement.style.backgroundColor = '#FFFFFF'
+  document.body.style.backgroundColor = '#FFFFFF'
+  return () => {
+    document.documentElement.style.backgroundColor = ''
+    document.body.style.backgroundColor = ''
+  }
+}, [])
+```
 
 ---
 
-## What's next — see TODO.md
+## Notes for future Claude Code sessions
+
+- Mobile-first. Design for 390px, enhance for larger.
+- Use CSS tokens, not hardcoded hex. Exception: `#FFFFFF`, `#111`, `#0E0E0E` for light/dark backgrounds.
+- `getCategoryMeta(cat)` — always, never direct object access.
+- All new events default `is_published: false`. Published = visible to users = unlocks calendar date.
+- When adding shimmer bar: import `ShimmerBar`, don't copy the div inline.
+- When adding footer: import `PageFooter` with appropriate props.
+- When adding event card visual: import `EventCard` from `@/components/Calendar/EventCard`.
+- Admin and user calendar should stay in visual sync. If you change EventCard, it affects both.
+- Sprint mentality: ship simple version. Optimize later.
+- Lucide for all icons. ⚽ and flag emojis are the only emoji exceptions.
