@@ -101,7 +101,7 @@ export default function WorldCupLanding() {
 
         <div className="landing-content" style={{
           position: 'relative', zIndex: 1,
-          maxWidth: 1200, margin: '0 auto',
+          margin: '0 auto',
           minHeight: '100dvh', boxSizing: 'border-box',
           display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
           pointerEvents: 'none',
@@ -148,7 +148,7 @@ export default function WorldCupLanding() {
               color: '#0E0E0E', opacity: 0.55, marginBottom: 24,
             }}>June – July 2026</p>
 
-            <button onClick={() => setShowModal(true)} style={{
+            <button onClick={() => setShowModal(true)} className="get-access-btn" style={{
               background: '#0E0E0E', color: '#FFFFFF', border: 'none', borderRadius: 4,
               padding: '16px 48px', fontSize: 13, fontWeight: 800,
               fontFamily: 'var(--font-display)', letterSpacing: '0.1em',

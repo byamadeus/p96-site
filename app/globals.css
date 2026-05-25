@@ -43,6 +43,17 @@ a {
   }
 }
 
+.get-access-btn {
+  transition: background 0.18s, transform 0.12s;
+}
+.get-access-btn:hover {
+  background: #1a2535 !important;
+  transform: translateY(-1px);
+}
+.get-access-btn:active {
+  transform: translateY(0);
+}
+
 .modal-panel {
   position: fixed;
   top: 50%;
