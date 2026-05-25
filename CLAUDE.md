@@ -16,7 +16,9 @@ Pro bono sprint. Decisions lean, cheap, fast to ship.
 ## Site structure
 
 ```
-/                   → Homepage (Capture 11 photo, dark overlay, nav links)
+/                   → TEMP: World Cup landing page (blue gradient, wheel animation, Get Access CTA)
+/homepage           → Legacy homepage (Capture 11 photo, dark overlay, nav links) — restore post-campaign
+/world-cup          → Redirects to /
 /calendar           → PRIMARY user-facing calendar (light mode, event cards)
 /wc2026             → WC2026 country selector (soccer ball grid, 12 diaspora nations)
 /wc2026/[country]   → Nation events page (swipeable cards, shareable URL)
@@ -24,6 +26,11 @@ Pro bono sprint. Decisions lean, cheap, fast to ship.
 /shop               → Ghost page (P2)
 /admin              → Admin panel (Supabase auth, event CRUD)
 ```
+
+**TEMP LANDING:** `/` is currently the WC2026 landing page (`app/page.tsx`). When campaign ends:
+1. Delete or archive `app/page.tsx` (the landing)
+2. Move `app/homepage/page.tsx` → `app/page.tsx`
+3. Remove `app/world-cup/page.tsx` redirect
 
 **Flow:** Homepage WORLD CUP link → `/calendar` (not `/wc2026`). Do not change this.
 
