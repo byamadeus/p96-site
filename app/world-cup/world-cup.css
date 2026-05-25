@@ -1,3 +1,7 @@
+.landing-content {
+  padding: 48px;
+}
+
 .wheel-container {
   position: absolute;
   left: calc(70% - 100px);
@@ -9,14 +13,14 @@
 }
 
 @media (max-width: 768px) {
+  .landing-content {
+    padding: 16px;
+  }
   .wheel-container {
     left: 68%;
     top: 17%;
     transform: translate(-50%, 0);
     width: min(200px, 30vw);
     height: min(200px, 30vw);
-  }
-  .landing-content {
-    padding: 16px;
   }
 }
