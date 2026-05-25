@@ -117,7 +117,7 @@ export default function WorldCupLanding() {
               letterSpacing: '0.2em', textTransform: 'uppercase',
               color: '#0E0E0E', opacity: 0.45,
               display: 'block', textAlign: 'left', width: '100%',
-              marginTop: 4,
+              marginTop: 4, padding: '0 4px',
             }}>Presents</span>
           </div>
 
