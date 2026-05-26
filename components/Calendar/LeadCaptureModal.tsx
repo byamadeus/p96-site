@@ -159,7 +159,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
                 fontFamily: 'var(--font-body)',
               }}
             >
-              Get access to events the second they drop. No spam, ever.
+              Get access to events, match days, play days the second they drop.
             </p>
 
             <label style={{ display: 'block', marginBottom: 16 }}>
@@ -183,7 +183,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
                 onKeyDown={e => e.key === 'Enter' && submit()}
                 placeholder="you@email.com"
                 style={inputStyle}
-                autoFocus
+                // autoFocus
               />
             </label>
 
@@ -305,7 +305,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
                 marginBottom: 10,
               }}
             >
-              {loading ? 'Saving...' : 'NOTIFY ME →'}
+              {loading ? 'Saving...' : 'SIGN ME UP →'}
             </button>
 
           </>
