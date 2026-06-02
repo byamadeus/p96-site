@@ -260,7 +260,6 @@ export default function CalendarGrid({
                 : 'watch_party'
               // Grey for priority-no-event, category color for real events
               const ballColor = hasEvents ? getCategoryMeta(ballCategory).color : 'rgba(0,0,0,0.1)'
-              const ballOpacity = 1
 
               // ── Cell style ───────────────────────────────────────
               const cellStyle: React.CSSProperties = {
