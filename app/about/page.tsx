@@ -13,20 +13,16 @@ function CtaLink({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
+      className="get-access-btn"
       style={{
-        background: 'none', border: 'none', padding: 0,
-        cursor: 'pointer', textAlign: 'left',
+        background: '#0E0E0E', color: '#FFFFFF',
+        border: 'none', borderRadius: 4,
+        padding: '16px 48px',
+        fontSize: 13, fontWeight: 800,
         fontFamily: 'var(--font-display)',
-        fontSize: 'clamp(40px, 9vw, 96px)',
-        fontWeight: 900, lineHeight: 0.95,
-        letterSpacing: '-0.04em',
-        color: '#0E0E0E',
-        textTransform: 'uppercase',
-        opacity: 1,
-        transition: 'opacity 0.15s',
+        letterSpacing: '0.1em', textTransform: 'uppercase',
+        cursor: 'pointer',
       }}
-      onMouseEnter={e => (e.currentTarget.style.opacity = '0.5')}
-      onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
     >
       {label}
     </button>
@@ -95,20 +91,8 @@ export default function AboutPage() {
         maxWidth: 1100, margin: '0 auto', width: '100%',
         padding: 'clamp(48px, 8vw, 96px) clamp(24px, 5vw, 80px)',
       }}>
-        <div style={{ display: 'flex', gap: 'clamp(24px, 6vw, 80px)', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-          {/* Newsletter */}
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           <CtaLink label="Newsletter" onClick={() => setShowModal(true)} />
-
-          {/* Divider */}
-          <span style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(40px, 9vw, 96px)',
-            fontWeight: 900, lineHeight: 0.95,
-            color: 'rgba(0,0,0,0.15)',
-            userSelect: 'none',
-          }}>/</span>
-
-          {/* Get in touch */}
           <CtaLink label="Get in Touch" onClick={copyEmail} />
         </div>
       </div>

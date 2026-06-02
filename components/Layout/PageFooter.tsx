@@ -35,14 +35,14 @@ export default function PageFooter({
         <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           {showContact && (
             <a
-              href="mailto:info@p96.nyc"
+              href="mailto:team@pninetysix.com"
               style={{
                 fontSize: 10, fontWeight: 600, letterSpacing: '0.14em',
                 textTransform: 'uppercase', color: 'rgba(0,0,0,0.3)',
                 fontFamily: 'var(--font-body)', textDecoration: 'none',
               }}
             >
-              STAY IN TOUCH
+              Inquiries · Collabs · Sponsorships · Partnerships
             </a>
           )}
           {showDevReset && (
