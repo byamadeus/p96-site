@@ -9,7 +9,7 @@ interface NavbarProps {
   light?: boolean
 }
 
-const DISABLED_ITEMS = new Set(['SHOP', 'ABOUT'])
+const DISABLED_ITEMS = new Set<string>([])
 
 function DisabledNavItem({ label, light }: { label: string; light: boolean }) {
   const [hovered, setHovered] = useState(false)
@@ -55,10 +55,11 @@ export default function Navbar({ light = false }: NavbarProps) {
           if (DISABLED_ITEMS.has(item)) {
             return <DisabledNavItem key={item} label={item} light={light} />
           }
+          const href = item === 'EVENTS' ? '/calendar' : item === 'SHOP' ? '/shop' : '/about'
           return (
             <Link
               key={item}
-              href="/calendar"
+              href={href}
               style={{
                 fontSize: 10, fontWeight: 600, letterSpacing: '0.12em',
                 textTransform: 'uppercase', color: subtle,
