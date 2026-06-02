@@ -41,7 +41,7 @@ function fmtViewHeader(dateStr: string): string {
 
 type ViewSlide = 'hidden' | 'visible' | 'exiting'
 
-export default function CalendarView({ events }: { events: Event[] }) {
+export default function CalendarView({ events, draftDates = new Set() }: { events: Event[]; draftDates?: Set<string> }) {
   const store = useAppStore()
   const [month, setMonth] = useState(MIN_MONTH)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -219,6 +219,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
                 selectedDate={selectedDate}
                 onSelectDate={handleDateSelect}
                 eventCategories={eventCategories}
+                extraPriorityDates={draftDates}
                 isMobile={isMobile}
               />
             </div>

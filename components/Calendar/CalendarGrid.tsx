@@ -116,12 +116,13 @@ interface CalendarGridProps {
   adminMode?: boolean
   eventCategories?: Map<string, string>
   isMobile?: boolean
+  extraPriorityDates?: Set<string>
 }
 
 export default function CalendarGrid({
   year, month, eventDates, selectedDate, onSelectDate,
   compact = false, light = false, adminMode = false,
-  eventCategories, isMobile = false,
+  eventCategories, isMobile = false, extraPriorityDates,
 }: CalendarGridProps) {
   const firstDay = new Date(year, month - 1, 1).getDay()
   const daysInMonth = new Date(year, month, 0).getDate()
@@ -207,7 +208,7 @@ export default function CalendarGrid({
               }
 
               const dateStr = isoDate(year, month, day)
-              const isPriority = PRIORITY_DATES.has(dateStr)
+              const isPriority = PRIORITY_DATES.has(dateStr) || (extraPriorityDates?.has(dateStr) ?? false)
               const hasEvents = eventDates.has(dateStr)
               const isSelected = selectedDate === dateStr
               const isInteractive = adminMode ? true : (hasEvents || isPriority)
