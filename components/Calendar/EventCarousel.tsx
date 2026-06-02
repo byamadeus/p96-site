@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import { ChevronLeft, ChevronRight, Lock } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { Lock } from 'lucide-react'
 import { Event } from '@/lib/supabase'
 import { Match } from '@/data/matches'
 import EventCard, { WhiteCard, CardBody } from './EventCard'
@@ -27,43 +27,25 @@ export default function EventCarousel({
   date, events, isLocked, onGetNotified, getMatch, light = false, mobile = false, onIdxChange,
 }: EventCarouselProps) {
   const [idx, setIdx] = useState(0)
-  const [dir, setDir] = useState<'left' | 'right'>('right')
-  const [animKey, setAnimKey] = useState(0)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  const activeRef = useRef<HTMLDivElement>(null)
 
   const cards = isLocked ? [] : events
-  const canPrev = idx > 0
-  const canNext = idx < cards.length - 1
-
   const dateLabel = fmtDateLabel(date)
 
-  function navigate(newIdx: number) {
-    setDir(newIdx > idx ? 'right' : 'left')
-    setAnimKey(k => k + 1)
-    setIdx(newIdx)
-  }
+  // Scroll active card into center whenever idx changes
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      inline: 'center',
+      block: 'nearest',
+    })
+  }, [idx])
 
-  const arrowStyle = (enabled: boolean, side: 'left' | 'right'): React.CSSProperties => ({
-    position: 'absolute',
-    [side]: 12,
-    top: '50%',
-    transform: 'translateY(-50%)',
-    width: 40, height: 40,
-    borderRadius: '50%',
-    border: `1.5px solid ${enabled
-      ? (light ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.25)')
-      : (light ? 'rgba(0,0,0,0.07)' : 'rgba(255,255,255,0.06)')}`,
-    background: enabled
-      ? (light ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)')
-      : 'transparent',
-    color: enabled
-      ? (light ? '#111' : '#fff')
-      : (light ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)'),
-    cursor: enabled ? 'pointer' : 'default',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    transition: 'all 0.15s',
-    zIndex: 2,
-  })
+  function navigate(newIdx: number) {
+    setIdx(newIdx)
+    onIdxChange?.(newIdx, cards.length)
+  }
 
   if (isLocked) {
     return (
@@ -117,152 +99,86 @@ export default function EventCarousel({
     )
   }
 
-  function handleMobileScroll() {
-    const el = scrollRef.current
-    if (!el) return
-    const i = Math.round(el.scrollLeft / el.clientWidth)
-    setIdx(i)
-    onIdxChange?.(i, cards.length)
-  }
-
-  // ── Mobile: full-width scroll-snap carousel ──────────────────────
-  if (mobile) {
-    return (
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'transparent' }}>
-        <style>{`.ec-mobile-scroll::-webkit-scrollbar { display: none }`}</style>
-        <div
-          ref={scrollRef}
-          onScroll={handleMobileScroll}
-          className="ec-mobile-scroll"
-          style={{
-            flex: 1,
-            display: 'flex',
-            overflowX: 'auto',
-            overflowY: 'visible',
-            scrollSnapType: 'x mandatory',
-            WebkitOverflowScrolling: 'touch',
-            scrollbarWidth: 'none',
-          }}
-        >
-          {cards.map((event, i) => (
-            <div
-              key={event.id ?? i}
-              style={{
-                minWidth: '100%',
-                height: '100%',
-                scrollSnapAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '20px 24px',
-                boxSizing: 'border-box',
-                overflowY: 'auto',
-              }}
-            >
-              <EventCard event={event} match={getMatch(event)} focal />
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
-  // ── Desktop: 3-card view with slide animation ─────────────────────
-  const prevEvent = canPrev ? cards[idx - 1] : null
-  const currEvent = cards[idx]
-  const nextEvent = canNext ? cards[idx + 1] : null
-
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', minHeight: 0 }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <style>{`
-        @keyframes ec-slide-from-right {
-          from { transform: translateX(48px); opacity: 0; }
-          to   { transform: translateX(0);    opacity: 1; }
-        }
-        @keyframes ec-slide-from-left {
-          from { transform: translateX(-48px); opacity: 0; }
-          to   { transform: translateX(0);     opacity: 1; }
-        }
-        .ec-slide-right { animation: ec-slide-from-right var(--duration-base) var(--ease-out) both; }
-        .ec-slide-left  { animation: ec-slide-from-left  var(--duration-base) var(--ease-out) both; }
+        .ec-track::-webkit-scrollbar { display: none; }
       `}</style>
 
-      {/* Card stage */}
-      <div style={{
-        flex: 1,
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px 64px 8px',
-      }}>
-        <button
-          onClick={() => canPrev && navigate(idx - 1)}
-          disabled={!canPrev}
-          style={arrowStyle(canPrev, 'left')}
-        >
-          <ChevronLeft size={18} strokeWidth={2} />
-        </button>
-
-        {/* Animated trio — key forces re-mount → triggers animation */}
+      {/* Peek strip — all cards visible, active centered + larger */}
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
         <div
-          key={animKey}
-          className={dir === 'right' ? 'ec-slide-right' : 'ec-slide-left'}
-          style={{ display: 'flex', alignItems: 'center', gap: 16 }}
+          ref={trackRef}
+          className="ec-track"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16,
+            overflowX: 'auto',
+            overflowY: 'visible',
+            scrollbarWidth: 'none',
+            // padding lets first/last card scroll to center
+            padding: '24px calc(50% - 150px) 32px',
+            scrollSnapType: 'x mandatory',
+            height: '100%',
+            boxSizing: 'border-box',
+          }}
         >
-          {prevEvent && (
-            <div style={{ cursor: 'pointer', opacity: 0.72 }} onClick={() => navigate(idx - 1)}>
-              <EventCard event={prevEvent} match={getMatch(prevEvent)} />
-            </div>
-          )}
-          {currEvent && (
-            <EventCard event={currEvent} match={getMatch(currEvent)} focal />
-          )}
-          {nextEvent && (
-            <div style={{ cursor: 'pointer', opacity: 0.72 }} onClick={() => navigate(idx + 1)}>
-              <EventCard event={nextEvent} match={getMatch(nextEvent)} />
-            </div>
-          )}
+          {cards.map((event, i) => {
+            const isActive = i === idx
+            return (
+              <div
+                key={event.id ?? i}
+                ref={isActive ? activeRef : null}
+                onClick={() => !isActive && navigate(i)}
+                style={{
+                  flexShrink: 0,
+                  scrollSnapAlign: 'center',
+                  transform: isActive ? 'scale(1)' : 'scale(0.88)',
+                  opacity: isActive ? 1 : 0.6,
+                  transition: 'transform var(--duration-base) var(--ease-out), opacity var(--duration-base) var(--ease-out)',
+                  cursor: isActive ? 'default' : 'pointer',
+                  transformOrigin: 'center center',
+                }}
+              >
+                <EventCard event={event} match={getMatch(event)} focal />
+              </div>
+            )
+          })}
         </div>
-
-        <button
-          onClick={() => canNext && navigate(idx + 1)}
-          disabled={!canNext}
-          style={arrowStyle(canNext, 'right')}
-        >
-          <ChevronRight size={18} strokeWidth={2} />
-        </button>
       </div>
 
       {/* Bottom — date label + dots */}
-      <div style={{
-        padding: '12px 24px 28px',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', gap: 8, flexShrink: 0,
-      }}>
-        <span style={{
-          fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 800,
-          letterSpacing: '0.06em', textTransform: 'uppercase',
-          color: light ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.55)',
+      {!mobile && (
+        <div style={{
+          padding: '0 24px 28px',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', gap: 8, flexShrink: 0,
         }}>
-          {dateLabel}
-        </span>
-        {cards.length > 1 && (
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-            {cards.map((_, i) => (
-              <button key={i} onClick={() => navigate(i)} style={{
-                width: i === idx ? 20 : 6, height: 6,
-                borderRadius: 3,
-                background: i === idx
-                  ? (light ? '#111' : '#fff')
-                  : (light ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.25)'),
-                border: 'none', cursor: 'pointer', padding: 0,
-                transition: 'all var(--duration-base) var(--ease-out)',
-              }} />
-            ))}
-          </div>
-        )}
-      </div>
+          <span style={{
+            fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 800,
+            letterSpacing: '0.06em', textTransform: 'uppercase',
+            color: light ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.55)',
+          }}>
+            {dateLabel}
+          </span>
+          {cards.length > 1 && (
+            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+              {cards.map((_, i) => (
+                <button key={i} onClick={() => navigate(i)} style={{
+                  width: i === idx ? 20 : 6, height: 6,
+                  borderRadius: 3,
+                  background: i === idx
+                    ? (light ? '#111' : '#fff')
+                    : (light ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.25)'),
+                  border: 'none', cursor: 'pointer', padding: 0,
+                  transition: 'all var(--duration-base) var(--ease-out)',
+                }} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
