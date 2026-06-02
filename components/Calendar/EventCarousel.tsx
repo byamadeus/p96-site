@@ -20,10 +20,11 @@ interface EventCarouselProps {
   getMatch: (e: Event) => Match | null
   light?: boolean
   mobile?: boolean
+  onIdxChange?: (idx: number, total: number) => void
 }
 
 export default function EventCarousel({
-  date, events, isLocked, onGetNotified, getMatch, light = false, mobile = false,
+  date, events, isLocked, onGetNotified, getMatch, light = false, mobile = false, onIdxChange,
 }: EventCarouselProps) {
   const [idx, setIdx] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -117,6 +118,7 @@ export default function EventCarousel({
     if (!el) return
     const i = Math.round(el.scrollLeft / el.clientWidth)
     setIdx(i)
+    onIdxChange?.(i, cards.length)
   }
 
   // ── Mobile: full-width scroll-snap carousel ──────────────────────
@@ -156,37 +158,6 @@ export default function EventCarousel({
           ))}
         </div>
 
-        {/* Dots + date */}
-        <div style={{
-          padding: '12px 24px 28px',
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', gap: 8, flexShrink: 0,
-          background: 'transparent',
-        }}>
-          <span style={{
-            fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 800,
-            letterSpacing: '0.06em', textTransform: 'uppercase',
-            color: 'rgba(0,0,0,0.4)',
-          }}>
-            {dateLabel}
-          </span>
-          {cards.length > 1 && (
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-              {cards.map((_, i) => (
-                <button key={i} onClick={() => {
-                  scrollRef.current?.scrollTo({ left: i * (scrollRef.current?.clientWidth ?? 0), behavior: 'smooth' })
-                  setIdx(i)
-                }} style={{
-                  width: i === idx ? 20 : 6, height: 6,
-                  borderRadius: 3,
-                  background: i === idx ? '#111' : 'rgba(0,0,0,0.2)',
-                  border: 'none', cursor: 'pointer', padding: 0,
-                  transition: 'all 0.2s',
-                }} />
-              ))}
-            </div>
-          )}
-        </div>
       </div>
     )
   }

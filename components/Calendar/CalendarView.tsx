@@ -51,6 +51,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
   const [isMobile, setIsMobile] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [carouselIdx, setCarouselIdx] = useState(0)
 
   useEffect(() => {
     document.documentElement.style.backgroundColor = '#7BBAD6'
@@ -227,7 +228,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
 
         {/* Mobile drawer */}
         {isMobile && (
-          <Drawer.Root open={drawerOpen} onOpenChange={open => { if (!open) setDrawerOpen(false) }}>
+          <Drawer.Root open={drawerOpen} onOpenChange={open => { if (!open) { setDrawerOpen(false); setCarouselIdx(0) } }}>
             <Drawer.Portal>
               <Drawer.Overlay style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100 }} />
               <Drawer.Content style={{
@@ -236,15 +237,27 @@ export default function CalendarView({ events }: { events: Event[] }) {
                 borderRadius: '20px 20px 0 0', height: '90dvh',
                 display: 'flex', flexDirection: 'column', outline: 'none',
               }}>
-                <Drawer.Handle style={{
-                  width: 36, height: 4, borderRadius: 2,
-                  background: 'rgba(0,0,0,0.15)', margin: '12px auto 0',
-                  display: 'block', flexShrink: 0,
-                }} />
+                {/* Drag handle + dots row */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '12px 24px 8px', flexShrink: 0 }}>
+                  <div style={{ width: 36, height: 4, borderRadius: 2, background: 'rgba(0,0,0,0.15)', marginBottom: eventsForDate.length > 1 ? 10 : 0 }} />
+                  {eventsForDate.length > 1 && (
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      {eventsForDate.map((_, i) => (
+                        <div key={i} style={{
+                          width: i === carouselIdx ? 20 : 6, height: 6,
+                          borderRadius: 3,
+                          background: i === carouselIdx ? '#111' : 'rgba(0,0,0,0.2)',
+                          transition: 'all var(--duration-base) var(--ease-out)',
+                        }} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {selectedDate && (
                   <div style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    padding: '12px 20px 8px', flexShrink: 0,
+                    padding: '8px 20px 8px', flexShrink: 0,
                     borderBottom: '1px solid rgba(0,0,0,0.06)',
                   }}>
                     <button
@@ -261,7 +274,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
                       {fmtViewHeader(selectedDate)}
                     </button>
                     <span style={{
-                      fontSize: 10, fontWeight: 700, color: 'rgba(0,0,0,0.35)',
+                      fontSize: 12, fontWeight: 700, color: 'rgba(0,0,0,0.35)',
                       fontFamily: 'var(--font-body)', letterSpacing: '0.08em',
                       textTransform: 'uppercase',
                     }}>
@@ -276,6 +289,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
                     isLocked={locked}
                     onGetNotified={() => { setDrawerOpen(false); setShowLeadCapture(true) }}
                     getMatch={getMatchForEvent}
+                    onIdxChange={(i) => setCarouselIdx(i)}
                     light
                     mobile
                   />
