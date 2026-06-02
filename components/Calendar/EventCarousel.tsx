@@ -122,7 +122,7 @@ export default function EventCarousel({
   // ── Mobile: full-width scroll-snap carousel ──────────────────────
   if (mobile) {
     return (
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'transparent' }}>
         <style>{`.ec-mobile-scroll::-webkit-scrollbar { display: none }`}</style>
         <div
           ref={scrollRef}
