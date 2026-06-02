@@ -31,10 +31,21 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
   const [countryOpen, setCountryOpen] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
+    setIsMobile(window.innerWidth <= 480)
     document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = '' }
+    let inner: number
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setVisible(true))
+    })
+    return () => {
+      document.body.style.overflow = ''
+      cancelAnimationFrame(outer)
+      cancelAnimationFrame(inner)
+    }
   }, [])
 
   async function submit() {
@@ -73,6 +84,8 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
           inset: 0,
           background: 'rgba(0,0,0,0.72)',
           zIndex: 200,
+          opacity: visible ? 1 : 0,
+          transition: 'opacity var(--duration-base) var(--ease-out)',
         }}
       />
 
@@ -83,6 +96,12 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
           border: '1px solid var(--c-border-emphasis)',
           padding: '28px 28px 32px',
           zIndex: 201,
+          opacity: visible ? 1 : 0,
+          // Desktop: slide up from slightly below center. Mobile: CSS handles position (no transform).
+          transform: isMobile
+            ? (visible ? 'translateY(0)' : 'translateY(24px)')
+            : (visible ? 'translate(-50%, -50%)' : 'translate(-50%, calc(-50% + 20px))'),
+          transition: 'opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out)',
         }}
       >
         <div
