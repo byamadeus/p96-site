@@ -9,7 +9,7 @@ interface PageFooterProps {
 }
 
 export default function PageFooter({
-  label = 'P96 IS THE PLACE',
+  label = 'PROJECT 96 © 2026',
   showContact = false,
   showDevReset = false,
 }: PageFooterProps) {
