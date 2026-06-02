@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import PageTransition from "@/components/Layout/PageTransition";
 
 export const metadata: Metadata = {
   title: "Project 96 — Diaspora World Cup Activation Series",
@@ -30,7 +31,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+        />
+      </head>
+      <body><PageTransition>{children}</PageTransition></body>
     </html>
   );
 }

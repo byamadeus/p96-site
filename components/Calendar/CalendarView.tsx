@@ -39,20 +39,23 @@ function fmtViewHeader(dateStr: string): string {
     .toUpperCase()
 }
 
+type ViewSlide = 'hidden' | 'visible' | 'exiting'
+
 export default function CalendarView({ events }: { events: Event[] }) {
   const store = useAppStore()
   const [month, setMonth] = useState(MIN_MONTH)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState(false)
+  const [viewSlide, setViewSlide] = useState<ViewSlide>('hidden')
+  const [monthVisible, setMonthVisible] = useState(true)
   const [showLeadCapture, setShowLeadCapture] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    // override html/body dark bg for this page
-    document.documentElement.style.backgroundColor = '#FFFFFF'
-    document.body.style.backgroundColor = '#FFFFFF'
+    document.documentElement.style.backgroundColor = '#7BBAD6'
+    document.body.style.backgroundColor = 'transparent'
     return () => {
       document.documentElement.style.backgroundColor = ''
       document.body.style.backgroundColor = ''
@@ -73,9 +76,33 @@ export default function CalendarView({ events }: { events: Event[] }) {
 
   const allEventDates = new Set(events.map(e => e.date))
 
+  // First category per date — drives soccer ball color in CalendarGrid
+  const eventCategories = new Map<string, string>()
+  events.forEach(e => { if (!eventCategories.has(e.date)) eventCategories.set(e.date, e.category) })
+
+  function openViewMode() {
+    setViewMode(true)
+    setViewSlide('hidden')
+    requestAnimationFrame(() => requestAnimationFrame(() => setViewSlide('visible')))
+  }
+
+  function closeViewMode() {
+    setViewSlide('exiting')
+    setTimeout(() => { setViewMode(false); setViewSlide('hidden') }, 250)
+  }
+
+  function changeMonth(dir: 1 | -1) {
+    setMonthVisible(false)
+    setTimeout(() => {
+      setMonth(m => m + dir)
+      setSelectedDate(null)
+      if (viewMode) closeViewMode()
+      requestAnimationFrame(() => requestAnimationFrame(() => setMonthVisible(true)))
+    }, 200)
+  }
+
   function handleDateSelect(date: string) {
     setSelectedDate(date)
-    // no published events for this date → lead capture
     if (!allEventDates.has(date)) {
       setShowLeadCapture(true)
       return
@@ -83,7 +110,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
     if (isMobile) {
       setDrawerOpen(true)
     } else {
-      setViewMode(true)
+      openViewMode()
     }
   }
 
@@ -93,93 +120,107 @@ export default function CalendarView({ events }: { events: Event[] }) {
   // locked = no published events for selected date
   const locked = selectedDate ? !allEventDates.has(selectedDate) : false
 
-  if (!mounted) return <div style={{ minHeight: '100dvh', background: '#FFFFFF' }} />
+  const PAGE_GRADIENT = 'radial-gradient(ellipse at 70% 50%, #FFFFFF 0%, #C5E8F5 42%, #7BBAD6 100%)'
+
+  if (!mounted) return (
+    <div style={{ height: '100dvh', background: PAGE_GRADIENT }} />
+  )
 
   return (
     <>
       {/* ── BROWSE MODE ─────────────────────────────────────────── */}
-      <div style={{ minHeight: '100dvh', background: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
+      {/* Fixed gradient layer — stays put while calendar scrolls */}
+      <div style={{
+        position: 'fixed', inset: 0,
+        background: PAGE_GRADIENT,
+        zIndex: -1,
+      }} />
+
+      <div style={{ height: '100dvh', background: 'transparent', display: 'flex', flexDirection: 'column', overflowX: 'hidden', width: '100%' }}>
         <ShimmerBar />
-        <Navbar light />
 
-        {/* Header */}
+        {/* Header — centered, no border */}
         <div style={{
-          padding: '20px 20px 0',
-          background: 'linear-gradient(180deg, #FFFBEF 0%, #FFFFFF 100%)',
-          borderBottom: '1px solid rgba(0,0,0,0.06)',
+          padding: '24px 20px 16px',
+          background: 'transparent',
           flexShrink: 0,
+          textAlign: 'center',
         }}>
-          <div style={{
-            maxWidth: 480, margin: '0 auto',
-            display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
-            paddingBottom: 16,
-          }}>
-            {/* Title + badge */}
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10 }}>
-              <h1 style={{
-                fontFamily: 'var(--font-display)', fontSize: 30, fontWeight: 800,
-                letterSpacing: '-0.03em', color: '#111', textTransform: 'uppercase',
-                lineHeight: 1,
-              }}>
-                Events
-              </h1>
-              <span style={{
-                fontFamily: 'var(--font-body)', fontSize: 9, fontWeight: 800,
-                letterSpacing: '0.12em', textTransform: 'uppercase', color: '#0E0E0E',
-                background: 'linear-gradient(90deg, var(--c-gold) 0%, #FF8C00 100%)',
-                padding: '3px 8px 4px', borderRadius: 4, marginBottom: 3,
-              }}>
-                WC 2026
-              </span>
-            </div>
+          {/* P96 logo */}
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
+            <P96Logo color="#0E0E0E" height={20} />
+          </div>
 
-            {/* Month nav */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, paddingBottom: 2 }}>
-              <button
-                onClick={() => { setMonth(m => m - 1); setSelectedDate(null); setViewMode(false) }}
-                disabled={month === MIN_MONTH}
-                style={{
-                  background: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 6,
-                  padding: '5px 6px', cursor: month === MIN_MONTH ? 'default' : 'pointer',
-                  color: month === MIN_MONTH ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.5)',
-                  display: 'flex', alignItems: 'center', transition: 'color 0.15s',
-                }}
-              >
-                <ChevronLeft size={14} strokeWidth={2.5} />
-              </button>
-              <span style={{
-                fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 800,
-                letterSpacing: '0.1em', textTransform: 'uppercase', color: '#111',
-                minWidth: 66, textAlign: 'center',
-              }}>
-                {month === 6 ? 'JUN' : 'JUL'} 2026
-              </span>
-              <button
-                onClick={() => { setMonth(m => m + 1); setSelectedDate(null); setViewMode(false) }}
-                disabled={month === MAX_MONTH}
-                style={{
-                  background: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 6,
-                  padding: '5px 6px', cursor: month === MAX_MONTH ? 'default' : 'pointer',
-                  color: month === MAX_MONTH ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.5)',
-                  display: 'flex', alignItems: 'center', transition: 'color 0.15s',
-                }}
-              >
-                <ChevronRight size={14} strokeWidth={2.5} />
-              </button>
-            </div>
+          {/* Title */}
+          <p style={{
+            fontFamily: 'var(--font-body)', fontSize: 9, fontWeight: 700,
+            letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: 'rgba(0,0,0,0.65)', marginBottom: 14,
+            maxWidth: '100%', wordBreak: 'break-word',
+          }}>
+            Diaspora World Cup Activation Calendar
+          </p>
+
+          {/* Month nav — display font, centered */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            <button
+              onClick={() => month > MIN_MONTH && changeMonth(-1)}
+              disabled={month === MIN_MONTH}
+              style={{
+                background: 'none', border: 'none', padding: '4px',
+                cursor: month === MIN_MONTH ? 'default' : 'pointer',
+                color: month === MIN_MONTH ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.6)',
+                display: 'flex', alignItems: 'center', transition: 'color 0.15s',
+              }}
+            >
+              <ChevronLeft size={20} strokeWidth={2.5} />
+            </button>
+
+            <span style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(28px, 5vw, 48px)',
+              fontWeight: 800,
+              letterSpacing: '-0.03em',
+              textTransform: 'uppercase',
+              color: '#0E0E0E',
+              lineHeight: 1,
+            }}>
+              {month === 6 ? 'June' : 'July'} 2026
+            </span>
+
+            <button
+              onClick={() => month < MAX_MONTH && changeMonth(1)}
+              disabled={month === MAX_MONTH}
+              style={{
+                background: 'none', border: 'none', padding: '4px',
+                cursor: month === MAX_MONTH ? 'default' : 'pointer',
+                color: month === MAX_MONTH ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.6)',
+                display: 'flex', alignItems: 'center', transition: 'color 0.15s',
+              }}
+            >
+              <ChevronRight size={20} strokeWidth={2.5} />
+            </button>
           </div>
         </div>
 
         {/* Calendar */}
-        <div style={{ flex: 1, overflowY: 'auto' }}>
-          <div style={{ maxWidth: 480, margin: '0 auto' }}>
-            <CalendarGrid
-              year={YEAR} month={month}
-              eventDates={allEventDates}
-              selectedDate={selectedDate}
-              onSelectDate={handleDateSelect}
-              light
-            />
+        <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', width: '100%' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', width: '100%' }}>
+            {/* Month fade transition wrapper */}
+            <div style={{
+              opacity: monthVisible ? 1 : 0,
+              transform: `translateY(${monthVisible ? 0 : 8}px)`,
+              transition: 'opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out)',
+            }}>
+              <CalendarGrid
+                year={YEAR} month={month}
+                eventDates={allEventDates}
+                selectedDate={selectedDate}
+                onSelectDate={handleDateSelect}
+                eventCategories={eventCategories}
+                isMobile={isMobile}
+              />
+            </div>
           </div>
         </div>
 
@@ -250,8 +291,12 @@ export default function CalendarView({ events }: { events: Event[] }) {
       {viewMode && selectedDate && !isMobile && (
         <div style={{
           position: 'fixed', inset: 0, zIndex: 50,
-          background: '#FFFFFF',
+          background: PAGE_GRADIENT,
           display: 'flex', flexDirection: 'column',
+          transform: viewSlide === 'visible' ? 'translateX(0)' : 'translateX(100%)',
+          transition: (viewSlide === 'visible' || viewSlide === 'exiting')
+            ? 'transform var(--duration-base) var(--ease-out)'
+            : 'none',
         }}>
           <ShimmerBar />
 
@@ -262,7 +307,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
             borderBottom: '1px solid rgba(0,0,0,0.08)',
           }}>
             <button
-              onClick={() => setViewMode(false)}
+              onClick={() => closeViewMode()}
               style={{
                 display: 'flex', alignItems: 'center', gap: 8,
                 background: 'none', border: 'none', cursor: 'pointer',
@@ -304,7 +349,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
                 selectedDate={selectedDate}
                 onSelectDate={date => {
                   if (!allEventDates.has(date)) {
-                    setViewMode(false)
+                    closeViewMode()
                     setShowLeadCapture(true)
                     return
                   }
