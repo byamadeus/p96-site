@@ -2,9 +2,8 @@
 // Was temporarily serving at / during the WC2026 campaign.
 'use client'
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import LeadCaptureModal from '@/components/Calendar/LeadCaptureModal'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import './world-cup.css'
 
 const WHEEL_REF = 400
@@ -32,7 +31,7 @@ const TROPHY: TrophyPos = { top: -97, left: -139, w: 680, h: 680 }
 const pct = (n: number) => `${(n / WHEEL_REF) * 100}%`
 
 export default function WorldCupLanding() {
-  const [showModal, setShowModal] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     document.documentElement.style.backgroundColor = '#7BBAD6'
@@ -148,28 +147,17 @@ export default function WorldCupLanding() {
               color: '#0E0E0E', opacity: 0.55, marginBottom: 24,
             }}>June – July 2026</p>
 
-            <button onClick={() => setShowModal(true)} className="get-access-btn" style={{
+            <button onClick={() => router.push('/calendar')} className="get-access-btn" style={{
               background: '#0E0E0E', color: '#FFFFFF', border: 'none', borderRadius: 4,
               padding: '16px 48px', fontSize: 13, fontWeight: 800,
               fontFamily: 'var(--font-display)', letterSpacing: '0.1em',
-              textTransform: 'uppercase', cursor: 'pointer', marginBottom: 12,
+              textTransform: 'uppercase', cursor: 'pointer', marginBottom: 16,
               animation: 'ctaPulse 3s ease-in-out 2s infinite',
             }}>Get Access</button>
-
-            <Link href="/calendar" style={{
-              display: 'inline-block',
-              background: 'transparent', color: '#0E0E0E',
-              border: '1.5px solid rgba(14,14,14,0.3)', borderRadius: 4,
-              padding: '14px 48px', fontSize: 12, fontWeight: 700,
-              fontFamily: 'var(--font-display)', letterSpacing: '0.1em',
-              textTransform: 'uppercase', cursor: 'pointer', marginBottom: 16,
-              textDecoration: 'none',
-            }}>View Calendar</Link>
           </div>
         </div>
       </main>
 
-      {showModal && <LeadCaptureModal onClose={() => setShowModal(false)} />}
     </>
   )
 }
