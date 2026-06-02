@@ -317,7 +317,8 @@ export default function CalendarGrid({
                           right: '8%',
                           background: ballColor,
                           borderRadius: '50%',
-                          padding: 4,
+                          width: 'clamp(22px, 3vw, 34px)',
+                          height: 'clamp(22px, 3vw, 34px)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -330,7 +331,7 @@ export default function CalendarGrid({
                             userSelect: 'none',
                             display: 'block',
                           }}>
-                            sports_and_outdoors
+                            sports_soccer
                           </span>
                         </div>
                       )}
