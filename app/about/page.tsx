@@ -9,29 +9,10 @@ import LeadCaptureModal from '@/components/Calendar/LeadCaptureModal'
 const PAGE_GRADIENT = 'radial-gradient(ellipse at 70% 50%, #FFFFFF 0%, #C5E8F5 42%, #7BBAD6 100%)'
 const EMAIL = 'pninetysix@gmail.com'
 
-function CtaLink({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="get-access-btn"
-      style={{
-        background: '#0E0E0E', color: '#FFFFFF',
-        border: 'none', borderRadius: 4,
-        padding: '16px 48px',
-        fontSize: 13, fontWeight: 800,
-        fontFamily: 'var(--font-display)',
-        letterSpacing: '0.1em', textTransform: 'uppercase',
-        cursor: 'pointer',
-      }}
-    >
-      {label}
-    </button>
-  )
-}
-
 export default function AboutPage() {
   const [showModal, setShowModal] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [touchHover, setTouchHover] = useState(false)
 
   function copyEmail() {
     navigator.clipboard.writeText(EMAIL).then(() => {
@@ -45,7 +26,7 @@ export default function AboutPage() {
       <ShimmerBar />
       <Navbar light />
 
-      {/* ── HERO — full screen ─────────────────────────────────── */}
+      {/* ── HERO + CTAs — single block ─────────────────────────── */}
       <div style={{
         minHeight: 'calc(100dvh - 61px)',
         display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
@@ -78,22 +59,45 @@ export default function AboutPage() {
           lineHeight: 1.65,
           color: 'rgba(0,0,0,0.55)',
           maxWidth: 520,
+          marginBottom: 'clamp(28px, 4vw, 40px)',
         }}>
           Project 96 is a cultural platform rooted in the African Diaspora.
           We build community through experiences, media, fashion, and products.
         </p>
-      </div>
 
-      {/* ── CTAs — visible after half scroll ──────────────────── */}
-      <div style={{
-        minHeight: '50dvh',
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
-        maxWidth: 1100, margin: '0 auto', width: '100%',
-        padding: 'clamp(48px, 8vw, 96px) clamp(24px, 5vw, 80px)',
-      }}>
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-          <CtaLink label="Newsletter" onClick={() => setShowModal(true)} />
-          <CtaLink label="Get in Touch" onClick={copyEmail} />
+        {/* CTAs */}
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Newsletter — filled */}
+          <button
+            onClick={() => setShowModal(true)}
+            className="get-access-btn"
+            style={{
+              background: '#0E0E0E', color: '#FFFFFF',
+              border: '1.5px solid #0E0E0E', borderRadius: 4,
+              padding: '14px 36px', fontSize: 13, fontWeight: 800,
+              fontFamily: 'var(--font-display)', letterSpacing: '0.1em',
+              textTransform: 'uppercase', cursor: 'pointer',
+            }}
+          >
+            Newsletter
+          </button>
+
+          {/* Get in Touch — outline, hover shows "Copy Email" */}
+          <button
+            onClick={copyEmail}
+            onMouseEnter={() => setTouchHover(true)}
+            onMouseLeave={() => setTouchHover(false)}
+            style={{
+              background: 'transparent', color: '#0E0E0E',
+              border: '1.5px solid rgba(14,14,14,0.35)', borderRadius: 4,
+              padding: '14px 36px', fontSize: 13, fontWeight: 800,
+              fontFamily: 'var(--font-display)', letterSpacing: '0.1em',
+              textTransform: 'uppercase', cursor: 'pointer',
+              transition: 'border-color 0.15s',
+            }}
+          >
+            {touchHover ? 'Copy Email' : 'Get in Touch'}
+          </button>
         </div>
       </div>
 
