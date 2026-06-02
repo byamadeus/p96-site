@@ -2,7 +2,6 @@ import ShimmerBar from '@/components/Layout/ShimmerBar'
 import Navbar from '@/components/Layout/Navbar'
 import PageFooter from '@/components/Layout/PageFooter'
 import P96Logo from '@/components/Layout/P96Logo'
-import PageBg from '@/components/Layout/PageBg'
 
 const PAGE_GRADIENT = 'radial-gradient(ellipse at 70% 50%, #FFFFFF 0%, #C5E8F5 42%, #7BBAD6 100%)'
 
@@ -26,11 +25,7 @@ const PILLARS = [
 
 export default function AboutPage() {
   return (
-    <>
-      <PageBg color="#7BBAD6" />
-      <div style={{ position: 'fixed', inset: 0, background: PAGE_GRADIENT, zIndex: -1 }} />
-
-      <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column', background: PAGE_GRADIENT }}>
         <ShimmerBar />
         <Navbar light />
 
@@ -196,7 +191,6 @@ export default function AboutPage() {
 
         <div style={{ flex: 1 }} />
         <PageFooter showContact />
-      </div>
-    </>
+    </div>
   )
 }
