@@ -1,11 +1,37 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { Bug } from 'lucide-react'
 import P96Logo from './P96Logo'
 
 interface NavbarProps {
   light?: boolean
+}
+
+const DISABLED_ITEMS = new Set(['SHOP', 'ABOUT'])
+
+function DisabledNavItem({ label, subtle, light }: { label: string; subtle: string; light: boolean }) {
+  const [hovered, setHovered] = useState(false)
+  const disabled = light ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.18)'
+
+  return (
+    <span
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'relative',
+        fontSize: 10, fontWeight: 600, letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        color: hovered ? disabled : disabled,
+        fontFamily: 'var(--font-body)',
+        cursor: 'default',
+        userSelect: 'none',
+      }}
+    >
+      {hovered ? 'COMING SOON' : label}
+    </span>
+  )
 }
 
 export default function Navbar({ light = false }: NavbarProps) {
@@ -25,21 +51,26 @@ export default function Navbar({ light = false }: NavbarProps) {
       </Link>
 
       <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'center' }}>
-        {(['EVENTS', 'SHOP', 'ABOUT'] as const).map(item => (
-          <Link
-            key={item}
-            href={item === 'EVENTS' ? '/calendar' : `/${item.toLowerCase()}`}
-            style={{
-              fontSize: 10, fontWeight: 600, letterSpacing: '0.12em',
-              textTransform: 'uppercase', color: subtle,
-              fontFamily: 'var(--font-body)', transition: 'color 0.15s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.color = muted)}
-            onMouseLeave={e => (e.currentTarget.style.color = subtle)}
-          >
-            {item}
-          </Link>
-        ))}
+        {(['EVENTS', 'SHOP', 'ABOUT'] as const).map(item => {
+          if (DISABLED_ITEMS.has(item)) {
+            return <DisabledNavItem key={item} label={item} subtle={subtle} light={light} />
+          }
+          return (
+            <Link
+              key={item}
+              href="/calendar"
+              style={{
+                fontSize: 10, fontWeight: 600, letterSpacing: '0.12em',
+                textTransform: 'uppercase', color: subtle,
+                fontFamily: 'var(--font-body)', transition: 'color 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = muted)}
+              onMouseLeave={e => (e.currentTarget.style.color = subtle)}
+            >
+              {item}
+            </Link>
+          )
+        })}
 
         <Link href="/admin" aria-label="Admin" title="Admin"
           style={{ display: 'flex', alignItems: 'center', color: subtle, transition: 'color 0.15s' }}
