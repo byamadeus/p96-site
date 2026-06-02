@@ -1,5 +1,6 @@
 'use client'
 
+import { Lock } from 'lucide-react'
 import { getCategoryMeta } from '@/lib/supabase'
 
 // Priority dates = WC match days — drive "accented-disabled" state when no events published
@@ -108,6 +109,58 @@ export function isoDate(y: number, m: number, d: number): string {
   return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
 }
 
+// ISO alpha-2 codes supported by flag-icons (non-standard fall back to emoji)
+const FLAG_ICONS_SUPPORTED = new Set([
+  'ad','ae','af','ag','ai','al','am','ao','aq','ar','as','at','au','aw','ax','az',
+  'ba','bb','bd','be','bf','bg','bh','bi','bj','bl','bm','bn','bo','bq','br','bs',
+  'bt','bv','bw','by','bz','ca','cc','cd','cf','cg','ch','ci','ck','cl','cm','cn',
+  'co','cr','cu','cv','cw','cx','cy','cz','de','dj','dk','dm','do','dz','ec','ee',
+  'eg','eh','er','es','et','fi','fj','fk','fm','fo','fr','ga','gb','gd','ge','gf',
+  'gg','gh','gi','gl','gm','gn','gp','gq','gr','gs','gt','gu','gw','gy','hk','hm',
+  'hn','hr','ht','hu','id','ie','il','im','in','io','iq','ir','is','it','je','jm',
+  'jo','jp','ke','kg','kh','ki','km','kn','kp','kr','kw','ky','kz','la','lb','lc',
+  'li','lk','lr','ls','lt','lu','lv','ly','ma','mc','md','me','mf','mg','mh','mk',
+  'ml','mm','mn','mo','mp','mq','mr','ms','mt','mu','mv','mw','mx','my','mz','na',
+  'nc','ne','nf','ng','ni','nl','no','np','nr','nu','nz','om','pa','pe','pf','pg',
+  'ph','pk','pl','pm','pn','pr','ps','pt','pw','py','qa','re','ro','rs','ru','rw',
+  'sa','sb','sc','sd','se','sg','sh','si','sj','sk','sl','sm','sn','so','sr','ss',
+  'st','sv','sx','sy','sz','tc','td','tf','tg','th','tj','tk','tl','tm','tn','to',
+  'tr','tt','tv','tw','tz','ua','ug','um','us','uy','uz','va','vc','ve','vg','vi',
+  'vn','vu','wf','ws','xk','ye','yt','za','zm','zw',
+])
+
+// Map non-standard FIFA codes → flag-icons codes
+const CODE_MAP: Record<string, string> = {
+  ecu: 'ec',
+  sco: 'gb-sct',
+  en:  'gb-eng',
+  wal: 'gb-wls',
+  nir: 'gb-nir',
+}
+
+type MatchDay = { codeA: string; codeB: string; count: number }
+
+function FlagCircle({ code }: { code: string }) {
+  const resolved = CODE_MAP[code] ?? code
+  const supported = FLAG_ICONS_SUPPORTED.has(resolved)
+  return (
+    <div style={{
+      width: 36, height: 36, borderRadius: '50%',
+      overflow: 'hidden', flexShrink: 0,
+      border: '2px solid rgba(255,255,255,0.7)',
+      background: supported ? undefined : 'rgba(0,0,0,0.1)',
+      boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+    }}>
+      {supported && (
+        <span
+          className={`fi fi-${resolved}`}
+          style={{ width: '100%', height: '100%', backgroundSize: 'cover', display: 'block' }}
+        />
+      )}
+    </div>
+  )
+}
+
 interface CalendarGridProps {
   year: number
   month: number
@@ -120,12 +173,14 @@ interface CalendarGridProps {
   eventCategories?: Map<string, string>
   isMobile?: boolean
   extraPriorityDates?: Set<string>
+  matchDays?: Map<string, MatchDay>
+
 }
 
 export default function CalendarGrid({
   year, month, eventDates, selectedDate, onSelectDate,
   compact = false, light = false, adminMode = false,
-  eventCategories, isMobile = false, extraPriorityDates,
+  eventCategories, isMobile = false, extraPriorityDates, matchDays,
 }: CalendarGridProps) {
   const firstDay = new Date(year, month - 1, 1).getDay()
   const daysInMonth = new Date(year, month, 0).getDate()
@@ -258,13 +313,16 @@ export default function CalendarGrid({
                 }
               }
 
-              // ── Soccer ball logic ────────────────────────────────
-              const showBall = !compact && (hasEvents || (isPriority && !adminMode))
-              const ballCategory = hasEvents
-                ? (eventCategories?.get(dateStr) ?? 'watch_party')
-                : 'watch_party'
-              // Grey for priority-no-event, category color for real events
-              const ballColor = hasEvents ? getCategoryMeta(ballCategory).color : 'rgba(0,0,0,0.1)'
+              // ── Icons logic ──────────────────────────────────────
+              const matchDay = !compact ? matchDays?.get(dateStr) : undefined
+              const ballCategory = eventCategories?.get(dateStr) ?? 'watch_party'
+              const ballColor = getCategoryMeta(ballCategory).color
+              // locked = priority date with no published events (not in admin)
+              const showLock = !compact && isPriority && !hasEvents && !adminMode
+              // ball always shown when events exist
+              const showBall = !compact && hasEvents
+              // flags only on desktop (not isMobile) when events + game day
+              const showFlags = showBall && !!matchDay && !isMobile
 
               // ── Cell style ───────────────────────────────────────
               const cellStyle: React.CSSProperties = {
@@ -313,30 +371,71 @@ export default function CalendarGrid({
                         {day}
                       </span>
 
-                      {/* Soccer ball — bottom right, white icon in colored circle */}
+                      {/* Lock icon — game days with no published events */}
+                      {showLock && (
+                        <div style={{
+                          position: 'absolute', bottom: '8%', right: '8%',
+                          background: 'rgba(0,0,0,0.1)',
+                          borderRadius: '50%',
+                          width: 'clamp(22px, 3vw, 34px)',
+                          height: 'clamp(22px, 3vw, 34px)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          flexShrink: 0,
+                        }}>
+                          <Lock size={14} strokeWidth={2} style={{ color: '#FFFFFF' }} />
+                        </div>
+                      )}
+
+                      {/* Soccer ball — top right when game day (desktop), bottom right otherwise */}
                       {showBall && (
                         <div style={{
                           position: 'absolute',
-                          bottom: '8%',
+                          top: showFlags ? '8%' : undefined,
+                          bottom: showFlags ? undefined : '8%',
                           right: '8%',
                           background: ballColor,
                           borderRadius: '50%',
                           width: 'clamp(22px, 3vw, 34px)',
                           height: 'clamp(22px, 3vw, 34px)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
                           flexShrink: 0,
                         }}>
                           <span className="material-icons" style={{
                             fontSize: 'clamp(14px, 1.8vw, 22px)',
-                            color: '#FFFFFF',
-                            lineHeight: 1,
-                            userSelect: 'none',
-                            display: 'block',
+                            color: '#FFFFFF', lineHeight: 1,
+                            userSelect: 'none', display: 'block',
                           }}>
                             sports_soccer
                           </span>
+                        </div>
+                      )}
+
+                      {/* Flag pair — bottom right, desktop + game day only */}
+                      {showFlags && matchDay && (
+                        <div style={{
+                          position: 'absolute', bottom: '8%', right: '6%',
+                          display: 'flex', alignItems: 'center', gap: 4,
+                        }}>
+                          <FlagCircle code={matchDay.codeA} />
+                          <span style={{
+                            fontFamily: 'var(--font-body)', fontSize: 9, fontWeight: 700,
+                            letterSpacing: '0.04em', color: 'rgba(0,0,0,0.5)',
+                          }}>V.</span>
+                          <FlagCircle code={matchDay.codeB} />
+                          {matchDay.count > 1 && (
+                            <span style={{
+                              background: '#000000', color: '#FFFFFF',
+                              fontSize: 9, fontWeight: 700,
+                              letterSpacing: '0.08em',
+                              fontFamily: 'var(--font-body)',
+                              borderRadius: 4,
+                              padding: '3px 5px',
+                              lineHeight: 1,
+                              whiteSpace: 'nowrap',
+                            }}>
+                              +{matchDay.count - 1}
+                            </span>
+                          )}
                         </div>
                       )}
                     </>

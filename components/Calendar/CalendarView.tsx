@@ -81,6 +81,25 @@ export default function CalendarView({ events, draftDates = new Set() }: { event
   const eventCategories = new Map<string, string>()
   events.forEach(e => { if (!eventCategories.has(e.date)) eventCategories.set(e.date, e.category) })
 
+  // Match day flags — highest activationScore diaspora game per date, + total count
+  const matchCountByDate = new Map<string, number>()
+  matches.forEach(m => matchCountByDate.set(m.date, (matchCountByDate.get(m.date) ?? 0) + 1))
+
+  const matchDays = new Map<string, { codeA: string; codeB: string; count: number }>()
+  // Group by date, pick best diaspora match (highest activationScore), fallback to first
+  const byDate = new Map<string, typeof matches>()
+  matches.forEach(m => { const arr = byDate.get(m.date) ?? []; arr.push(m); byDate.set(m.date, arr) })
+  byDate.forEach((dayMatches, date) => {
+    const diaspora = dayMatches.filter(m => m.teamA.isDiaspora || m.teamB.isDiaspora)
+    const pool = diaspora.length > 0 ? diaspora : dayMatches
+    const best = pool.reduce((a, b) => b.activationScore >= a.activationScore ? b : a)
+    matchDays.set(date, {
+      codeA: best.teamA.code.toLowerCase(),
+      codeB: best.teamB.code.toLowerCase(),
+      count: dayMatches.length,
+    })
+  })
+
   function openViewMode() {
     setViewMode(true)
     setViewSlide('hidden')
@@ -220,6 +239,7 @@ export default function CalendarView({ events, draftDates = new Set() }: { event
                 onSelectDate={handleDateSelect}
                 eventCategories={eventCategories}
                 extraPriorityDates={draftDates}
+                matchDays={matchDays}
                 isMobile={isMobile}
               />
             </div>

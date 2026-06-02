@@ -112,7 +112,7 @@ export default function HomepageLayout() {
         </div>
 
         {/* Footer bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 6 }}>
           <span style={{
             fontSize: 10,
             fontWeight: 600,
@@ -121,7 +121,7 @@ export default function HomepageLayout() {
             color: 'rgba(255,255,255,0.38)',
             fontFamily: 'var(--font-body)',
           }}>
-            P96 IS THE PLACE
+            PROJECT 96 © 2026
           </span>
           <a href="mailto:team@pninetysix.com" style={{
             fontSize: 10,

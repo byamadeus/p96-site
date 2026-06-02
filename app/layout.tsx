@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "flag-icons/css/flag-icons.min.css";
 import PageTransition from "@/components/Layout/PageTransition";
 
 export const metadata: Metadata = {

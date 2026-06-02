@@ -20,6 +20,8 @@ export default function PageFooter({
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: 6,
       flexShrink: 0,
       background: '#FFFFFF',
     }}>
