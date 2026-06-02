@@ -259,7 +259,7 @@ export default function CalendarGrid({
                 ? (eventCategories?.get(dateStr) ?? 'watch_party')
                 : 'watch_party'
               // Grey for priority-no-event, category color for real events
-              const ballColor = hasEvents ? getCategoryMeta(ballCategory).color : 'rgba(0,0,0,0.2)'
+              const ballColor = hasEvents ? getCategoryMeta(ballCategory).color : 'rgba(0,0,0,0.1)'
               const ballOpacity = 1
 
               // ── Cell style ───────────────────────────────────────
@@ -330,7 +330,7 @@ export default function CalendarGrid({
                             userSelect: 'none',
                             display: 'block',
                           }}>
-                            sports_soccer
+                            sports_and_outdoors
                           </span>
                         </div>
                       )}
