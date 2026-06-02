@@ -309,20 +309,30 @@ export default function CalendarGrid({
                         {day}
                       </span>
 
-                      {/* Soccer ball — bottom right, category color */}
+                      {/* Soccer ball — bottom right, white icon in colored circle */}
                       {showBall && (
-                        <span className="material-icons" style={{
+                        <div style={{
                           position: 'absolute',
-                          bottom: '10%',
-                          right: '10%',
-                          fontSize: 'clamp(16px, 2vw, 26px)',
-                          color: ballColor,
-                          opacity: ballOpacity,
-                          lineHeight: 1,
-                          userSelect: 'none',
+                          bottom: '8%',
+                          right: '8%',
+                          background: ballColor,
+                          borderRadius: '50%',
+                          padding: 4,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
                         }}>
-                          sports_soccer
-                        </span>
+                          <span className="material-icons" style={{
+                            fontSize: 'clamp(14px, 1.8vw, 22px)',
+                            color: '#FFFFFF',
+                            lineHeight: 1,
+                            userSelect: 'none',
+                            display: 'block',
+                          }}>
+                            sports_soccer
+                          </span>
+                        </div>
                       )}
                     </>
                   )}
