@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Lock } from 'lucide-react'
 import { Event } from '@/lib/supabase'
 import { Match } from '@/data/matches'
@@ -29,12 +29,11 @@ export default function EventCarousel({
   const [idx, setIdx] = useState(0)
   const trackRef = useRef<HTMLDivElement>(null)
   const activeRef = useRef<HTMLDivElement>(null)
-  const snapTimer = useRef<ReturnType<typeof setTimeout>>()
 
   const cards = isLocked ? [] : events
   const dateLabel = fmtDateLabel(date)
 
-  // Scroll active card into center whenever idx changes programmatically
+  // Scroll active card into center on programmatic navigation
   useEffect(() => {
     activeRef.current?.scrollIntoView({
       behavior: 'smooth',
@@ -43,11 +42,9 @@ export default function EventCarousel({
     })
   }, [idx])
 
-  const handleScroll = useCallback(() => {
+  function handleScroll() {
     const track = trackRef.current
     if (!track) return
-
-    // Update idx to closest card
     const center = track.scrollLeft + track.clientWidth / 2
     let closest = 0
     let minDist = Infinity
@@ -61,18 +58,7 @@ export default function EventCarousel({
       setIdx(closest)
       onIdxChange?.(closest, cards.length)
     }
-
-    // After momentum settles, snap to nearest card
-    clearTimeout(snapTimer.current)
-    snapTimer.current = setTimeout(() => {
-      activeRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        inline: 'center',
-        block: 'nearest',
-      })
-    }, 150)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idx, cards.length, onIdxChange])
+  }
 
   function navigate(newIdx: number) {
     setIdx(newIdx)
@@ -149,6 +135,7 @@ export default function EventCarousel({
             gap: 16,
             overflowX: 'auto',
             scrollbarWidth: 'none',
+            scrollSnapType: 'x mandatory',
             padding: '24px calc(50% - 150px) 32px',
             boxSizing: 'border-box',
           } as React.CSSProperties}
@@ -162,6 +149,7 @@ export default function EventCarousel({
                 onClick={() => !isActive && navigate(i)}
                 style={{
                   flexShrink: 0,
+                  scrollSnapAlign: 'center',
                   transform: isActive ? 'scale(1)' : 'scale(0.88)',
                   opacity: isActive ? 1 : 0.6,
                   transition: 'transform var(--duration-base) var(--ease-out), opacity var(--duration-base) var(--ease-out)',
