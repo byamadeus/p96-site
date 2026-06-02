@@ -34,13 +34,12 @@ export interface EventCardProps {
 
 export default function EventCard({ event, match, focal = false }: EventCardProps) {
   const meta = getCategoryMeta(event.category)
-  const imgHeight = focal ? 240 : 180
   const titleSize = focal ? 22 : 17
 
   return (
     <WhiteCard style={{ width: focal ? 300 : 240 }}>
       <div style={{
-        height: imgHeight,
+        aspectRatio: '4/5',
         background: event.flier_url
           ? `url(${event.flier_url}) center/cover no-repeat`
           : '#F2F2F2',
