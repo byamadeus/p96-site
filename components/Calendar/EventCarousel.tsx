@@ -106,23 +106,37 @@ export default function EventCarousel({
       `}</style>
 
       {/* Peek strip — all cards visible, active centered + larger */}
-      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
+      <div style={{ flex: 1, position: 'relative' }}>
         <div
           ref={trackRef}
           className="ec-track"
+          onScroll={() => {
+            const track = trackRef.current
+            if (!track) return
+            const center = track.scrollLeft + track.clientWidth / 2
+            let closest = 0
+            let minDist = Infinity
+            Array.from(track.children).forEach((child, i) => {
+              const el = child as HTMLElement
+              const childCenter = el.offsetLeft + el.offsetWidth / 2
+              const dist = Math.abs(childCenter - center)
+              if (dist < minDist) { minDist = dist; closest = i }
+            })
+            if (closest !== idx) {
+              setIdx(closest)
+              onIdxChange?.(closest, cards.length)
+            }
+          }}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 16,
             overflowX: 'auto',
-            overflowY: 'visible',
             scrollbarWidth: 'none',
-            // padding lets first/last card scroll to center
             padding: '24px calc(50% - 150px) 32px',
             scrollSnapType: 'x mandatory',
-            height: '100%',
             boxSizing: 'border-box',
-          }}
+          } as React.CSSProperties}
         >
           {cards.map((event, i) => {
             const isActive = i === idx
