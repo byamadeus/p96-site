@@ -49,7 +49,7 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
   }, [])
 
   async function submit() {
-    if (!email) return
+    if (!email || !phone) return
     setLoading(true)
     await supabase.from('intake').insert({
       email,
@@ -218,16 +218,14 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
                   marginBottom: 6,
                 }}
               >
-                Phone{' '}
-                <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, opacity: 0.55 }}>
-                  (optional)
-                </span>
+                Phone
               </div>
               <input
                 type="tel"
                 value={phone}
                 onChange={e => setPhone(e.target.value)}
                 placeholder="+1 (555) 000-0000"
+                required
                 style={inputStyle}
               />
             </label>
@@ -307,19 +305,19 @@ export default function LeadCaptureModal({ onClose }: LeadCaptureModalProps) {
 
             <button
               onClick={submit}
-              disabled={!email || loading}
+              disabled={!email || !phone || loading}
               style={{
                 width: '100%',
                 padding: '14px',
-                background: email ? 'var(--c-text)' : 'rgba(255,255,255,0.08)',
-                color: email ? 'var(--c-bg)' : 'var(--c-text-subtle)',
+                background: email && phone ? 'var(--c-text)' : 'rgba(255,255,255,0.08)',
+                color: email && phone ? 'var(--c-bg)' : 'var(--c-text-subtle)',
                 border: 'none',
                 borderRadius: 8,
                 fontSize: 16,
                 fontWeight: 800,
                 fontFamily: 'var(--font-display)',
                 letterSpacing: '-0.01em',
-                cursor: email ? 'pointer' : 'default',
+                cursor: email && phone ? 'pointer' : 'default',
                 transition: 'background 0.15s, color 0.15s',
                 marginBottom: 10,
               }}

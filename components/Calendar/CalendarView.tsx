@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
 import { Drawer } from 'vaul'
 import P96Logo from '@/components/Layout/P96Logo'
 import ShimmerBar from '@/components/Layout/ShimmerBar'
@@ -148,7 +149,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
         }}>
           {/* P96 logo */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 10 }}>
-            <P96Logo color="#0E0E0E" height={20} />
+            <Link href="/"><P96Logo color="#0E0E0E" height={20} /></Link>
           </div>
 
           {/* Title */}
@@ -336,7 +337,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
               {fmtViewHeader(selectedDate)}
             </button>
 
-            <P96Logo height={20} color="#111111" />
+            <Link href="/"><P96Logo height={20} color="#111111" /></Link>
 
             <span style={{
               fontSize: 11, fontWeight: 700, letterSpacing: '0.1em',
