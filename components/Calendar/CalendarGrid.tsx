@@ -141,22 +141,23 @@ export default function CalendarGrid({
 
   return (
     <div>
-      {/* Month header */}
-      <div style={{
-        padding: compact ? '10px 8px 8px' : '12px 8px 10px',
-        borderBottom: `1px solid ${light ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'}`,
-      }}>
-        <span style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: compact ? 9 : 11,
-          fontWeight: 800,
-          letterSpacing: '0.1em',
-          color: light ? '#AAAAAA' : (compact ? 'var(--c-text-subtle)' : 'rgba(0,0,0,0.6)'),
-          textTransform: 'uppercase',
+      {/* Month header — compact sidebar only */}
+      {compact && (
+        <div style={{
+          padding: '10px 8px 8px',
+          borderBottom: `1px solid ${light ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)'}`,
         }}>
-          {compact ? monthName.slice(0, 3) : `${monthName} ${year}`}
-        </span>
-      </div>
+          <span style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 9, fontWeight: 800,
+            letterSpacing: '0.1em',
+            color: light ? '#AAAAAA' : 'var(--c-text-subtle)',
+            textTransform: 'uppercase',
+          }}>
+            {monthName.slice(0, 3)}
+          </span>
+        </div>
+      )}
 
       {/* Day headers — black pill style */}
       {!compact && (
