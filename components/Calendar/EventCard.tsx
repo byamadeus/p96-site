@@ -37,7 +37,7 @@ export default function EventCard({ event, match, focal = false }: EventCardProp
   const titleSize = focal ? 22 : 17
 
   return (
-    <WhiteCard style={{ width: focal ? 300 : 240 }}>
+    <WhiteCard style={{ width: 300 }}>
       <div style={{
         aspectRatio: '4/5',
         background: event.flier_url
