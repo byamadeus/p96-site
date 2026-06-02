@@ -3,6 +3,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import LeadCaptureModal from '@/components/Calendar/LeadCaptureModal'
 import './world-cup.css'
 
@@ -151,9 +152,19 @@ export default function WorldCupLanding() {
               background: '#0E0E0E', color: '#FFFFFF', border: 'none', borderRadius: 4,
               padding: '16px 48px', fontSize: 13, fontWeight: 800,
               fontFamily: 'var(--font-display)', letterSpacing: '0.1em',
-              textTransform: 'uppercase', cursor: 'pointer', marginBottom: 16,
+              textTransform: 'uppercase', cursor: 'pointer', marginBottom: 12,
               animation: 'ctaPulse 3s ease-in-out 2s infinite',
             }}>Get Access</button>
+
+            <Link href="/calendar" style={{
+              display: 'inline-block',
+              background: 'transparent', color: '#0E0E0E',
+              border: '1.5px solid rgba(14,14,14,0.3)', borderRadius: 4,
+              padding: '14px 48px', fontSize: 12, fontWeight: 700,
+              fontFamily: 'var(--font-display)', letterSpacing: '0.1em',
+              textTransform: 'uppercase', cursor: 'pointer', marginBottom: 16,
+              textDecoration: 'none',
+            }}>View Calendar</Link>
           </div>
         </div>
       </main>
