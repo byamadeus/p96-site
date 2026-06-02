@@ -132,7 +132,7 @@ export default function EventCarousel({
             flex: 1,
             display: 'flex',
             overflowX: 'auto',
-            overflowY: 'hidden',
+            overflowY: 'visible',
             scrollSnapType: 'x mandatory',
             WebkitOverflowScrolling: 'touch',
             scrollbarWidth: 'none',
@@ -200,7 +200,7 @@ export default function EventCarousel({
         alignItems: 'center',
         justifyContent: 'center',
         padding: '24px 64px 8px',
-        overflow: 'hidden',
+        overflow: 'visible',
       }}>
         {/* Left arrow — outside card group */}
         <button
