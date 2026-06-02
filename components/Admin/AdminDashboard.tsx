@@ -51,6 +51,7 @@ export default function AdminDashboard() {
       .from('events')
       .select('*')
       .order('date', { ascending: true })
+      .order('time', { ascending: true, nullsFirst: false })
     setEvents((data ?? []) as Event[])
     setLoading(false)
   }, [])
