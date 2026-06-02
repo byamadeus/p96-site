@@ -348,7 +348,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
           </div>
 
           {/* Body: date strip + carousel */}
-          <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
             {/* Minimized date strip */}
             <div style={{
               width: 64, flexShrink: 0,

@@ -171,7 +171,7 @@ export default function EventCarousel({
   const nextEvent = canNext ? cards[idx + 1] : null
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', minHeight: 0 }}>
       <style>{`
         @keyframes ec-slide-from-right {
           from { transform: translateX(48px); opacity: 0; }
