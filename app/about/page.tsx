@@ -9,6 +9,30 @@ import LeadCaptureModal from '@/components/Calendar/LeadCaptureModal'
 const PAGE_GRADIENT = 'radial-gradient(ellipse at 70% 50%, #FFFFFF 0%, #C5E8F5 42%, #7BBAD6 100%)'
 const EMAIL = 'pninetysix@gmail.com'
 
+function CtaLink({ label, onClick }: { label: string; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        background: 'none', border: 'none', padding: 0,
+        cursor: 'pointer', textAlign: 'left',
+        fontFamily: 'var(--font-display)',
+        fontSize: 'clamp(40px, 9vw, 96px)',
+        fontWeight: 900, lineHeight: 0.95,
+        letterSpacing: '-0.04em',
+        color: '#0E0E0E',
+        textTransform: 'uppercase',
+        opacity: 1,
+        transition: 'opacity 0.15s',
+      }}
+      onMouseEnter={e => (e.currentTarget.style.opacity = '0.5')}
+      onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+    >
+      {label}
+    </button>
+  )
+}
+
 export default function AboutPage() {
   const [showModal, setShowModal] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -67,99 +91,26 @@ export default function AboutPage() {
       {/* ── CTAs — visible after half scroll ──────────────────── */}
       <div style={{
         minHeight: '50dvh',
-        display: 'flex', alignItems: 'center',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
         maxWidth: 1100, margin: '0 auto', width: '100%',
         padding: 'clamp(48px, 8vw, 96px) clamp(24px, 5vw, 80px)',
-        gap: 16,
-        flexWrap: 'wrap',
       }}>
-        {/* Newsletter */}
-        <button
-          onClick={() => setShowModal(true)}
-          style={{
-            flex: '1 1 240px',
-            background: '#0E0E0E', color: '#FFFFFF',
-            border: 'none', borderRadius: 12,
-            padding: 'clamp(28px, 4vw, 40px) clamp(24px, 3vw, 36px)',
-            cursor: 'pointer', textAlign: 'left',
-            transition: 'transform 0.15s, box-shadow 0.15s',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.transform = 'translateY(-3px)'
-            e.currentTarget.style.boxShadow = '0 16px 48px rgba(0,0,0,0.2)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.transform = ''
-            e.currentTarget.style.boxShadow = ''
-          }}
-        >
-          <p style={{
-            fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700,
-            letterSpacing: '0.14em', textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.45)', marginBottom: 12,
-          }}>
-            Stay connected
-          </p>
-          <p style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(28px, 4vw, 48px)',
-            fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1,
-            color: '#FFFFFF', textTransform: 'uppercase', marginBottom: 16,
-          }}>
-            Newsletter →
-          </p>
-          <p style={{
-            fontFamily: 'var(--font-body)', fontSize: 13,
-            color: 'rgba(255,255,255,0.5)', lineHeight: 1.55,
-          }}>
-            Events, match days, drops — first to know.
-          </p>
-        </button>
+        <div style={{ display: 'flex', gap: 'clamp(24px, 6vw, 80px)', flexWrap: 'wrap', alignItems: 'flex-start' }}>
+          {/* Newsletter */}
+          <CtaLink label="Newsletter" onClick={() => setShowModal(true)} />
 
-        {/* Get in touch */}
-        <button
-          onClick={copyEmail}
-          style={{
-            flex: '1 1 240px',
-            background: 'rgba(255,255,255,0.55)',
-            border: '1px solid rgba(255,255,255,0.7)',
-            borderRadius: 12,
-            padding: 'clamp(28px, 4vw, 40px) clamp(24px, 3vw, 36px)',
-            cursor: 'pointer', textAlign: 'left',
-            transition: 'transform 0.15s, box-shadow 0.15s',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.transform = 'translateY(-3px)'
-            e.currentTarget.style.boxShadow = '0 16px 48px rgba(0,0,0,0.12)'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.transform = ''
-            e.currentTarget.style.boxShadow = ''
-          }}
-        >
-          <p style={{
-            fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700,
-            letterSpacing: '0.14em', textTransform: 'uppercase',
-            color: 'rgba(0,0,0,0.4)', marginBottom: 12,
-          }}>
-            Work with us
-          </p>
-          <p style={{
+          {/* Divider */}
+          <span style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(28px, 4vw, 48px)',
-            fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1,
-            color: '#0E0E0E', textTransform: 'uppercase', marginBottom: 16,
-          }}>
-            Get in touch →
-          </p>
-          <p style={{
-            fontFamily: 'var(--font-body)', fontSize: 13,
-            color: 'rgba(0,0,0,0.45)', lineHeight: 1.55,
-          }}>
-            {EMAIL}
-          </p>
-        </button>
+            fontSize: 'clamp(40px, 9vw, 96px)',
+            fontWeight: 900, lineHeight: 0.95,
+            color: 'rgba(0,0,0,0.15)',
+            userSelect: 'none',
+          }}>/</span>
+
+          {/* Get in touch */}
+          <CtaLink label="Get in Touch" onClick={copyEmail} />
+        </div>
       </div>
 
       <PageFooter showContact />
