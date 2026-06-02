@@ -128,7 +128,7 @@ export default function EventCarousel({
   // ── Mobile: full-width scroll-snap carousel ──────────────────────
   if (mobile) {
     return (
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'transparent', overflowY: 'auto', minHeight: 0 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'transparent' }}>
         <style>{`.ec-mobile-scroll::-webkit-scrollbar { display: none }`}</style>
         <div
           ref={scrollRef}
@@ -149,12 +149,14 @@ export default function EventCarousel({
               key={event.id ?? i}
               style={{
                 minWidth: '100%',
+                height: '100%',
                 scrollSnapAlign: 'center',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '20px 24px',
                 boxSizing: 'border-box',
+                overflowY: 'auto',
               }}
             >
               <EventCard event={event} match={getMatch(event)} focal />
