@@ -27,6 +27,8 @@ export default function EventCarousel({
   date, events, isLocked, onGetNotified, getMatch, light = false, mobile = false, onIdxChange,
 }: EventCarouselProps) {
   const [idx, setIdx] = useState(0)
+  const [dir, setDir] = useState<'left' | 'right'>('right')
+  const [animKey, setAnimKey] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const cards = isLocked ? [] : events
@@ -34,6 +36,12 @@ export default function EventCarousel({
   const canNext = idx < cards.length - 1
 
   const dateLabel = fmtDateLabel(date)
+
+  function navigate(newIdx: number) {
+    setDir(newIdx > idx ? 'right' : 'left')
+    setAnimKey(k => k + 1)
+    setIdx(newIdx)
+  }
 
   const arrowStyle = (enabled: boolean, side: 'left' | 'right'): React.CSSProperties => ({
     position: 'absolute',
@@ -67,7 +75,7 @@ export default function EventCarousel({
             alignItems: 'center', justifyContent: 'center', gap: 10,
           }}>
             <Lock size={28} strokeWidth={1.5} style={{ color: '#999' }} />
-            <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', color: '#999' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.14em', color: '#999' }}>
               DROPPING SOON
             </span>
           </div>
@@ -103,15 +111,11 @@ export default function EventCarousel({
           textTransform: 'uppercase', fontFamily: 'var(--font-body)',
           color: light ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)',
         }}>
-          No events match filter
+          No events
         </span>
       </div>
     )
   }
-
-  const prevEvent = canPrev ? cards[idx - 1] : null
-  const currEvent = cards[idx]
-  const nextEvent = canNext ? cards[idx + 1] : null
 
   function handleMobileScroll() {
     const el = scrollRef.current
@@ -157,13 +161,30 @@ export default function EventCarousel({
             </div>
           ))}
         </div>
-
       </div>
     )
   }
 
+  // ── Desktop: 3-card view with slide animation ─────────────────────
+  const prevEvent = canPrev ? cards[idx - 1] : null
+  const currEvent = cards[idx]
+  const nextEvent = canNext ? cards[idx + 1] : null
+
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <style>{`
+        @keyframes ec-slide-from-right {
+          from { transform: translateX(48px); opacity: 0; }
+          to   { transform: translateX(0);    opacity: 1; }
+        }
+        @keyframes ec-slide-from-left {
+          from { transform: translateX(-48px); opacity: 0; }
+          to   { transform: translateX(0);     opacity: 1; }
+        }
+        .ec-slide-right { animation: ec-slide-from-right var(--duration-base) var(--ease-out) both; }
+        .ec-slide-left  { animation: ec-slide-from-left  var(--duration-base) var(--ease-out) both; }
+      `}</style>
+
       {/* Card stage */}
       <div style={{
         flex: 1,
@@ -172,21 +193,24 @@ export default function EventCarousel({
         alignItems: 'center',
         justifyContent: 'center',
         padding: '24px 64px 8px',
-        overflow: 'visible',
+        overflow: 'hidden',
       }}>
-        {/* Left arrow — outside card group */}
         <button
-          onClick={() => canPrev && setIdx(i => i - 1)}
+          onClick={() => canPrev && navigate(idx - 1)}
           disabled={!canPrev}
           style={arrowStyle(canPrev, 'left')}
         >
           <ChevronLeft size={18} strokeWidth={2} />
         </button>
 
-        {/* Cards row — all full opacity, no scaling */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        {/* Animated trio — key forces re-mount → triggers animation */}
+        <div
+          key={animKey}
+          className={dir === 'right' ? 'ec-slide-right' : 'ec-slide-left'}
+          style={{ display: 'flex', alignItems: 'center', gap: 16 }}
+        >
           {prevEvent && (
-            <div style={{ cursor: 'pointer' }} onClick={() => setIdx(i => i - 1)}>
+            <div style={{ cursor: 'pointer', opacity: 0.72 }} onClick={() => navigate(idx - 1)}>
               <EventCard event={prevEvent} match={getMatch(prevEvent)} />
             </div>
           )}
@@ -194,15 +218,14 @@ export default function EventCarousel({
             <EventCard event={currEvent} match={getMatch(currEvent)} focal />
           )}
           {nextEvent && (
-            <div style={{ cursor: 'pointer' }} onClick={() => setIdx(i => i + 1)}>
+            <div style={{ cursor: 'pointer', opacity: 0.72 }} onClick={() => navigate(idx + 1)}>
               <EventCard event={nextEvent} match={getMatch(nextEvent)} />
             </div>
           )}
         </div>
 
-        {/* Right arrow — outside card group */}
         <button
-          onClick={() => canNext && setIdx(i => i + 1)}
+          onClick={() => canNext && navigate(idx + 1)}
           disabled={!canNext}
           style={arrowStyle(canNext, 'right')}
         >
@@ -226,14 +249,14 @@ export default function EventCarousel({
         {cards.length > 1 && (
           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             {cards.map((_, i) => (
-              <button key={i} onClick={() => setIdx(i)} style={{
+              <button key={i} onClick={() => navigate(i)} style={{
                 width: i === idx ? 20 : 6, height: 6,
                 borderRadius: 3,
                 background: i === idx
                   ? (light ? '#111' : '#fff')
                   : (light ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.25)'),
                 border: 'none', cursor: 'pointer', padding: 0,
-                transition: 'all 0.2s',
+                transition: 'all var(--duration-base) var(--ease-out)',
               }} />
             ))}
           </div>
@@ -242,4 +265,3 @@ export default function EventCarousel({
     </div>
   )
 }
-
