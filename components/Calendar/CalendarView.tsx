@@ -85,14 +85,24 @@ export default function CalendarView({ events, draftDates = new Set() }: { event
   const matchCountByDate = new Map<string, number>()
   matches.forEach(m => matchCountByDate.set(m.date, (matchCountByDate.get(m.date) ?? 0) + 1))
 
+  // Hardcoded overrides: force a specific match ID to display for a given date
+  const MATCH_DAY_OVERRIDES: Record<string, number> = {
+    '2026-06-13': 2, // Brazil vs Morocco (id:2) — override Haiti/Scotland
+  }
+
   const matchDays = new Map<string, { codeA: string; codeB: string; count: number }>()
   // Group by date, pick best diaspora match (highest activationScore), fallback to first
   const byDate = new Map<string, typeof matches>()
   matches.forEach(m => { const arr = byDate.get(m.date) ?? []; arr.push(m); byDate.set(m.date, arr) })
   byDate.forEach((dayMatches, date) => {
-    const diaspora = dayMatches.filter(m => m.teamA.isDiaspora || m.teamB.isDiaspora)
-    const pool = diaspora.length > 0 ? diaspora : dayMatches
-    const best = pool.reduce((a, b) => b.activationScore >= a.activationScore ? b : a)
+    const overrideId = MATCH_DAY_OVERRIDES[date]
+    const best = overrideId
+      ? (dayMatches.find(m => m.id === overrideId) ?? dayMatches[0])
+      : (() => {
+          const diaspora = dayMatches.filter(m => m.teamA.isDiaspora || m.teamB.isDiaspora)
+          const pool = diaspora.length > 0 ? diaspora : dayMatches
+          return pool.reduce((a, b) => b.activationScore >= a.activationScore ? b : a)
+        })()
     matchDays.set(date, {
       codeA: best.teamA.code.toLowerCase(),
       codeB: best.teamB.code.toLowerCase(),
