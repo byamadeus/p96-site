@@ -29,12 +29,16 @@ export default function EventCarousel({
   const [idx, setIdx] = useState(0)
   const trackRef = useRef<HTMLDivElement>(null)
   const activeRef = useRef<HTMLDivElement>(null)
+  const programmaticNav = useRef(false)
 
   const cards = isLocked ? [] : events
   const dateLabel = fmtDateLabel(date)
 
-  // Scroll active card into center on programmatic navigation
+  // Only scroll into center when navigation was programmatic (dot/card click)
+  // Scroll-driven idx updates must NOT re-trigger scrollIntoView — causes jitter loop
   useEffect(() => {
+    if (!programmaticNav.current) return
+    programmaticNav.current = false
     activeRef.current?.scrollIntoView({
       behavior: 'smooth',
       inline: 'center',
@@ -61,6 +65,7 @@ export default function EventCarousel({
   }
 
   function navigate(newIdx: number) {
+    programmaticNav.current = true
     setIdx(newIdx)
     onIdxChange?.(newIdx, cards.length)
   }
