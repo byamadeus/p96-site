@@ -202,7 +202,7 @@ export default function CalendarGrid({
               if (!day) {
                 return compact
                   ? <div key={ci} style={{ width: cellSize, height: cellSize }} />
-                  : <div key={ci} style={{ aspectRatio: isMobile ? '1/3' : '1' }} />
+                  : <div key={ci} style={{ aspectRatio: isMobile ? '1/1.3' : '1' }} />
               }
 
               const dateStr = isoDate(year, month, day)
@@ -279,7 +279,7 @@ export default function CalendarGrid({
                 cellStyle.fontFamily = 'var(--font-body)'
                 cellStyle.color = color
               } else {
-                cellStyle.aspectRatio = isMobile ? '1/3' : '1'
+                cellStyle.aspectRatio = isMobile ? '1/1.3' : '1'
               }
 
               return (
