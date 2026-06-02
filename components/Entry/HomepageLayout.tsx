@@ -123,7 +123,7 @@ export default function HomepageLayout() {
           }}>
             P96 IS THE PLACE
           </span>
-          <a href="mailto:info@p96.nyc" style={{
+          <a href="mailto:team@pninetysix.com" style={{
             fontSize: 10,
             fontWeight: 600,
             letterSpacing: '0.14em',
@@ -132,7 +132,7 @@ export default function HomepageLayout() {
             fontFamily: 'var(--font-body)',
             textDecoration: 'none',
           }}>
-            STAY IN TOUCH
+            Inquiries · Collabs · Sponsorships · Partnerships
           </a>
         </div>
       </div>
