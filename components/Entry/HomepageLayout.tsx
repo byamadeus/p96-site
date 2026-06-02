@@ -68,13 +68,12 @@ export default function HomepageLayout() {
             </span>
           </Link>
 
-          {/* SHOP — coming soon */}
-          <div
+          {/* SHOP */}
+          <Link
+            href="/shop"
             onMouseEnter={() => setHovered('shop')}
             onMouseLeave={() => setHovered(null)}
-            style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'default', userSelect: 'none' }}
-          >
-            <span style={{
+            style={{
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(40px, 9vw, 64px)',
               fontWeight: 800,
@@ -82,34 +81,20 @@ export default function HomepageLayout() {
               letterSpacing: '-0.03em',
               color: '#ffffff',
               textTransform: 'uppercase',
-              opacity: hovered === 'shop' ? 0.35 : 1,
+              textDecoration: 'none',
+              opacity: hovered === 'shop' ? 0.7 : 1,
               transition: 'opacity 0.2s',
-            }}>
-              SHOP
-            </span>
-            <span style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--c-gold)',
-              fontFamily: 'var(--font-body)',
-              whiteSpace: 'nowrap',
-              opacity: hovered === 'shop' ? 1 : 0,
-              transition: 'opacity 0.2s',
-              pointerEvents: 'none',
-            }}>
-              COMING SOON
-            </span>
-          </div>
+            }}
+          >
+            SHOP
+          </Link>
 
-          {/* ABOUT — coming soon */}
-          <div
+          {/* ABOUT */}
+          <Link
+            href="/about"
             onMouseEnter={() => setHovered('about')}
             onMouseLeave={() => setHovered(null)}
-            style={{ display: 'flex', alignItems: 'center', gap: 12, cursor: 'default', userSelect: 'none' }}
-          >
-            <span style={{
+            style={{
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(40px, 9vw, 64px)',
               fontWeight: 800,
@@ -117,26 +102,13 @@ export default function HomepageLayout() {
               letterSpacing: '-0.03em',
               color: '#ffffff',
               textTransform: 'uppercase',
-              opacity: hovered === 'about' ? 0.35 : 1,
+              textDecoration: 'none',
+              opacity: hovered === 'about' ? 0.7 : 1,
               transition: 'opacity 0.2s',
-            }}>
-              ABOUT
-            </span>
-            <span style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: 'var(--c-gold)',
-              fontFamily: 'var(--font-body)',
-              whiteSpace: 'nowrap',
-              opacity: hovered === 'about' ? 1 : 0,
-              transition: 'opacity 0.2s',
-              pointerEvents: 'none',
-            }}>
-              COMING SOON
-            </span>
-          </div>
+            }}
+          >
+            ABOUT
+          </Link>
         </div>
 
         {/* Footer bar */}
