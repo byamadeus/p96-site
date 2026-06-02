@@ -11,7 +11,7 @@ interface NavbarProps {
 
 const DISABLED_ITEMS = new Set(['SHOP', 'ABOUT'])
 
-function DisabledNavItem({ label, subtle, light }: { label: string; subtle: string; light: boolean }) {
+function DisabledNavItem({ label, light }: { label: string; light: boolean }) {
   const [hovered, setHovered] = useState(false)
   const disabled = light ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.18)'
 
@@ -53,7 +53,7 @@ export default function Navbar({ light = false }: NavbarProps) {
       <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'center' }}>
         {(['EVENTS', 'SHOP', 'ABOUT'] as const).map(item => {
           if (DISABLED_ITEMS.has(item)) {
-            return <DisabledNavItem key={item} label={item} subtle={subtle} light={light} />
+            return <DisabledNavItem key={item} label={item} light={light} />
           }
           return (
             <Link

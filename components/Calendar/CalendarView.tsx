@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Drawer } from 'vaul'
-import Navbar from '@/components/Layout/Navbar'
 import P96Logo from '@/components/Layout/P96Logo'
 import ShimmerBar from '@/components/Layout/ShimmerBar'
 import PageFooter from '@/components/Layout/PageFooter'
