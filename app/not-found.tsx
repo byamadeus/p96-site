@@ -11,7 +11,6 @@ const COG_DUR = 6
 const COG_STAGGER = COG_DUR / 10
 
 type SlicePos = { top: number; left: number; w: number; h: number; rotate: number; z: number }
-type TrophyPos = { top: number; left: number; w: number; h: number }
 
 const SLICES: SlicePos[] = [
   { top:  559, left:  222, w: 400, h: 400, rotate: 0, z:  1 },
@@ -26,7 +25,6 @@ const SLICES: SlicePos[] = [
   { top:  366, left: -317, w: 400, h: 400, rotate: 0, z: 10 },
 ]
 
-const TROPHY: TrophyPos = { top: -97, left: -139, w: 680, h: 680 }
 
 const pct = (n: number) => `${(n / WHEEL_REF) * 100}%`
 
@@ -83,17 +81,6 @@ export default function NotFound() {
             )
           })}
 
-          <div style={{
-            position: 'absolute',
-            top: pct(TROPHY.top), left: pct(TROPHY.left),
-            width: pct(TROPHY.w), height: pct(TROPHY.h),
-            zIndex: 20,
-          }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/landing/TROPHY.svg" alt="" draggable={false}
-              style={{ width: '100%', height: '100%', objectFit: 'contain', userSelect: 'none', pointerEvents: 'none' }}
-            />
-          </div>
         </div>
 
         {/* Centered content */}
