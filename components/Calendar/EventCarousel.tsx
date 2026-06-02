@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { Lock } from 'lucide-react'
 import { Event } from '@/lib/supabase'
 import { Match } from '@/data/matches'
@@ -29,11 +29,12 @@ export default function EventCarousel({
   const [idx, setIdx] = useState(0)
   const trackRef = useRef<HTMLDivElement>(null)
   const activeRef = useRef<HTMLDivElement>(null)
+  const snapTimer = useRef<ReturnType<typeof setTimeout>>()
 
   const cards = isLocked ? [] : events
   const dateLabel = fmtDateLabel(date)
 
-  // Scroll active card into center whenever idx changes
+  // Scroll active card into center whenever idx changes programmatically
   useEffect(() => {
     activeRef.current?.scrollIntoView({
       behavior: 'smooth',
@@ -41,6 +42,37 @@ export default function EventCarousel({
       block: 'nearest',
     })
   }, [idx])
+
+  const handleScroll = useCallback(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    // Update idx to closest card
+    const center = track.scrollLeft + track.clientWidth / 2
+    let closest = 0
+    let minDist = Infinity
+    Array.from(track.children).forEach((child, i) => {
+      const el = child as HTMLElement
+      const childCenter = el.offsetLeft + el.offsetWidth / 2
+      const dist = Math.abs(childCenter - center)
+      if (dist < minDist) { minDist = dist; closest = i }
+    })
+    if (closest !== idx) {
+      setIdx(closest)
+      onIdxChange?.(closest, cards.length)
+    }
+
+    // After momentum settles, snap to nearest card
+    clearTimeout(snapTimer.current)
+    snapTimer.current = setTimeout(() => {
+      activeRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      })
+    }, 150)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idx, cards.length, onIdxChange])
 
   function navigate(newIdx: number) {
     setIdx(newIdx)
@@ -100,7 +132,7 @@ export default function EventCarousel({
   }
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto', minHeight: 0 }}>
       <style>{`
         .ec-track::-webkit-scrollbar { display: none; }
       `}</style>
@@ -110,23 +142,7 @@ export default function EventCarousel({
         <div
           ref={trackRef}
           className="ec-track"
-          onScroll={() => {
-            const track = trackRef.current
-            if (!track) return
-            const center = track.scrollLeft + track.clientWidth / 2
-            let closest = 0
-            let minDist = Infinity
-            Array.from(track.children).forEach((child, i) => {
-              const el = child as HTMLElement
-              const childCenter = el.offsetLeft + el.offsetWidth / 2
-              const dist = Math.abs(childCenter - center)
-              if (dist < minDist) { minDist = dist; closest = i }
-            })
-            if (closest !== idx) {
-              setIdx(closest)
-              onIdxChange?.(closest, cards.length)
-            }
-          }}
+          onScroll={handleScroll}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -134,7 +150,6 @@ export default function EventCarousel({
             overflowX: 'auto',
             scrollbarWidth: 'none',
             padding: '24px calc(50% - 150px) 32px',
-            scrollSnapType: 'x mandatory',
             boxSizing: 'border-box',
           } as React.CSSProperties}
         >
@@ -147,7 +162,6 @@ export default function EventCarousel({
                 onClick={() => !isActive && navigate(i)}
                 style={{
                   flexShrink: 0,
-                  scrollSnapAlign: 'center',
                   transform: isActive ? 'scale(1)' : 'scale(0.88)',
                   opacity: isActive ? 1 : 0.6,
                   transition: 'transform var(--duration-base) var(--ease-out), opacity var(--duration-base) var(--ease-out)',
