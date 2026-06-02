@@ -171,7 +171,7 @@ export default function EventCarousel({
   const nextEvent = canNext ? cards[idx + 1] : null
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <style>{`
         @keyframes ec-slide-from-right {
           from { transform: translateX(48px); opacity: 0; }
@@ -193,7 +193,6 @@ export default function EventCarousel({
         alignItems: 'center',
         justifyContent: 'center',
         padding: '24px 64px 8px',
-        overflow: 'hidden',
       }}>
         <button
           onClick={() => canPrev && navigate(idx - 1)}
