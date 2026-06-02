@@ -161,6 +161,7 @@ export default function EventCarousel({
           padding: '12px 24px 28px',
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', gap: 8, flexShrink: 0,
+          background: 'transparent',
         }}>
           <span style={{
             fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 800,

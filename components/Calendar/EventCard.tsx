@@ -61,18 +61,18 @@ export default function EventCard({ event, match, focal = false }: EventCardProp
       <div style={{ padding: focal ? '16px 20px 20px' : '12px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <span style={{
-            fontSize: 10, fontWeight: 700, letterSpacing: '0.1em',
+            fontSize: 12, fontWeight: 700, letterSpacing: '0.1em',
             textTransform: 'uppercase', color: meta.color, fontFamily: 'var(--font-body)',
           }}>
             {meta.label}
           </span>
-          <span style={{ fontSize: 10, color: '#999', fontFamily: 'var(--font-body)', fontWeight: 500 }}>
+          <span style={{ fontSize: 12, color: '#999', fontFamily: 'var(--font-body)', fontWeight: 500 }}>
             {new Date(event.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase()}
           </span>
         </div>
 
         {match && (
-          <div style={{ fontSize: 10, fontWeight: 700, color: '#555', marginBottom: 6, fontFamily: 'var(--font-body)' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#555', marginBottom: 6, fontFamily: 'var(--font-body)' }}>
             ⚽ {match.teamA.flag} vs {match.teamB.flag} · {match.kickoff}
           </div>
         )}
@@ -87,13 +87,13 @@ export default function EventCard({ event, match, focal = false }: EventCardProp
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 14 }}>
           {event.time && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#555', fontFamily: 'var(--font-body)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#555', fontFamily: 'var(--font-body)' }}>
               <Clock size={11} strokeWidth={2} style={{ flexShrink: 0, color: '#888' }} />
               {fmtTime(event.time)}
             </div>
           )}
           {event.location_name && (
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 5, fontSize: 11, color: '#555', fontFamily: 'var(--font-body)' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 5, fontSize: 12, color: '#555', fontFamily: 'var(--font-body)' }}>
               <MapPin size={11} strokeWidth={2} style={{ flexShrink: 0, marginTop: 1, color: '#888' }} />
               <span>
                 {event.location_name}
@@ -114,7 +114,7 @@ export default function EventCard({ event, match, focal = false }: EventCardProp
             RSVP →
           </a>
         ) : (
-          <p style={{ fontSize: 11, color: '#999', fontFamily: 'var(--font-body)', textAlign: 'center', margin: 0 }}>
+          <p style={{ fontSize: 12, color: '#999', fontFamily: 'var(--font-body)', textAlign: 'center', margin: 0 }}>
             Free entry — no RSVP needed
           </p>
         )}

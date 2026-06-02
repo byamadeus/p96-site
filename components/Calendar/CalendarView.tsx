@@ -233,7 +233,7 @@ export default function CalendarView({ events }: { events: Event[] }) {
               <Drawer.Content style={{
                 position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 101,
                 background: '#FFFFFF',
-                borderRadius: '20px 20px 0 0', height: '88dvh',
+                borderRadius: '20px 20px 0 0', height: '85dvh',
                 display: 'flex', flexDirection: 'column', outline: 'none',
               }}>
                 <Drawer.Handle style={{
