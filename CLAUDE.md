@@ -242,19 +242,20 @@ borough     text
 `/data/matches.ts` — 33 diaspora-relevant match objects. 12 diaspora nations:
 🇿🇦 South Africa · 🇲🇦 Morocco · 🇸🇳 Senegal · 🇩🇿 Algeria · 🇨🇻 Cape Verde · 🇪🇬 Egypt · 🇹🇻 Tunisia · 🇨🇮 Ivory Coast · 🇬🇭 Ghana · 🇨🇩 DR Congo · 🇭🇹 Haiti · 🇨🇼 Curaçao
 
-`/data/seedEvents.ts` — seed events merged with DB events on calendar page. Remove when real events exist.
+`/data/seedEvents.ts` — seed file exists but is NOT imported anywhere. Calendar shows only published Supabase events.
 
 ---
 
-## Current state (as of May 25, 2026)
+## Current state (as of June 1, 2026)
 
 | Route | Status |
 |---|---|
-| `/` | Static photo homepage, dark overlay, nav to /calendar |
-| `/calendar` | Light mode, 3 date states, Jun/Jul nav, mobile scroll-snap, lead capture |
-| `/admin` | Calendar-mirrored UI, draft/live workflow, form modal, all-events list |
+| `/` | WC2026 landing — blue radial gradient, wheel animation, "Get Access" + "View Calendar" CTAs |
+| `/calendar` | Blue gradient bg, white event cards, peek carousel (scroll-snap), mobile Vaul drawer |
+| `/admin` | Matches calendar visual — same gradient, same EventCard, aligned login screen |
 | `/wc2026` | Country selector (soccer ball grid) |
-| `/wc2026/[country]` | Nation events swipeable cards |
+| `/404` | Custom — gradient bg, wheel animation, "404" display font, Go Home CTA |
+| `/reference` | Design tokens viewer (internal) |
 
 ---
 
@@ -265,6 +266,28 @@ borough     text
 - **`adminMode` prop on CalendarGrid** makes all dates clickable, hides lock icons.
 - **`light` prop on Navbar** for dark-on-light inner pages.
 - **EventCard is the canonical card.** Admin wraps it with controls below; don't re-implement visually.
+- **AdminEventCard** wraps `<EventCard />` + control row below. Width `300` to match.
+- **`light` prop on DateStrip** always pass in view mode (both user calendar and admin) — matches PAGE_GRADIENT bg.
+
+### Carousel (EventCarousel)
+- Uses CSS `scroll-snap-type: x mandatory` + `scroll-snap-align: center` — native momentum snap, no debounce.
+- `onScroll` updates `idx` for scale/opacity state only. Does NOT call `scrollIntoView`.
+- `scrollIntoView` only fires on programmatic nav (dot/card click) via `programmaticNav` ref flag.
+- All cards width `300`. Active card `scale(1)` opacity `1`, side cards `scale(0.88)` opacity `0.6`.
+- Track padding `calc(50% - 150px)` so first/last card can center-snap.
+- Mobile: `mobile` prop → hides bottom date label + dots (dots live in drawer header instead).
+
+### Calendar visual design
+- `PAGE_GRADIENT = 'radial-gradient(ellipse at 70% 50%, #FFFFFF 0%, #C5E8F5 42%, #7BBAD6 100%)'`
+- All calendar cells have subtle background. Event cells pop with white bg + border. Priority cells gold tint.
+- Soccer ball icons: white `sports_soccer` Material Icon in colored circle. Category color when events exist, `rgba(0,0,0,0.1)` grey when disabled.
+- Mobile cell aspect ratio: `1/1.3`. Desktop: `1/1`.
+- No month header on main grid (compact sidebar only).
+
+### Shadow / overflow pattern
+- **Never use `overflow: hidden` on containers that wrap cards** — clips drop shadows.
+- Use `overflowY: auto` + `minHeight: 0` on flex children that need scroll.
+- View mode body: `display: 'flex', minHeight: 0` (not `overflow: hidden`).
 
 ### Calendar architecture
 - `eventsForDate` uses raw `events` (not filtered) — nations filter hidden, don't re-add filtering there.
@@ -313,3 +336,8 @@ useEffect(() => {
 - Admin and user calendar should stay in visual sync. If you change EventCard, it affects both.
 - Sprint mentality: ship simple version. Optimize later.
 - Lucide for all icons. ⚽ and flag emojis are the only emoji exceptions.
+- Soccer ball: `<span className="material-icons">sports_soccer</span>` — Material Icons CDN loaded in `app/layout.tsx`.
+- Lead capture modal: entrance animation via `programmaticNav` double-rAF pattern (`visible` state, fade + translateY).
+- SHOP + ABOUT nav links: disabled with hover "COMING SOON" (`DisabledNavItem` component in Navbar.tsx).
+- `/wc2026/[country]` route deleted — was removed as part of visual redesign sprint.
+- dev branch (`origin/dev`) = Vercel preview. Feature work in `feature/visual-redesign`, force-push to dev for preview.

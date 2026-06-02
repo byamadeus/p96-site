@@ -453,7 +453,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Body */}
-          <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+          <div style={{ flex: 1, display: 'flex', minHeight: 0 }}>
             {/* Date strip sidebar */}
             <div style={{
               width: 64, flexShrink: 0,
@@ -466,6 +466,7 @@ export default function AdminDashboard() {
                 selectedDate={selectedDate}
                 onSelectDate={date => setSelectedDate(date)}
                 adminMode
+                light
               />
             </div>
 
@@ -575,7 +576,7 @@ interface AdminEventCardProps {
 
 function AdminEventCard({ event, onEdit, onDelete, onDuplicate, onTogglePublish, deleting }: AdminEventCardProps) {
   return (
-    <div style={{ width: 240, display: 'flex', flexDirection: 'column' }}>
+    <div style={{ width: 300, display: 'flex', flexDirection: 'column' }}>
       <EventCard event={event} />
 
       <div style={{ display: 'flex', gap: 5, padding: '10px 2px 0', alignItems: 'center', flexWrap: 'wrap' }}>
