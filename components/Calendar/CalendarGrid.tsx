@@ -217,35 +217,40 @@ export default function CalendarGrid({
               let color: string
 
               if (light) {
-                color = isInteractive ? '#1A1A1A' : 'rgba(0,0,0,0.22)'
+                color = isInteractive ? '#1A1A1A' : 'rgba(0,0,0,0.3)'
+                bg = 'rgba(0,0,0,0.03)'           // all cells get subtle bg
+                borderColor = 'rgba(0,0,0,0.05)'
                 if (isSelected) {
                   bg = 'var(--c-gold)'
+                  borderColor = 'transparent'
                   color = '#000'
                 } else if (hasEvents) {
-                  bg = 'linear-gradient(135deg, rgba(255,218,68,0.28) 0%, rgba(255,140,0,0.15) 100%)'
-                  borderColor = 'rgba(200,130,0,0.28)'
+                  bg = 'linear-gradient(135deg, rgba(255,218,68,0.38) 0%, rgba(255,140,0,0.22) 100%)'
+                  borderColor = 'rgba(200,130,0,0.35)'
                   color = '#6B4A00'
                 } else if (isPriority) {
                   bg = 'rgba(255,218,68,0.1)'
-                  borderColor = 'rgba(200,150,0,0.2)'
+                  borderColor = 'rgba(200,150,0,0.15)'
                   color = 'rgba(0,0,0,0.3)'
                 }
               } else {
                 // Gradient bg — dark text throughout. Min opacity: black-60.
-                color = isInteractive ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)'
+                color = isInteractive ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.5)'
+                bg = 'rgba(255,255,255,0.07)'      // all cells get subtle bg
+                borderColor = 'rgba(255,255,255,0.1)'
                 if (isSelected) {
                   bg = 'var(--c-gold)'
+                  borderColor = 'transparent'
                   color = '#000000'
                 } else if (hasEvents) {
-                  bg = 'rgba(255,255,255,0.35)'
-                  borderColor = 'rgba(255,255,255,0.5)'
+                  bg = 'rgba(255,255,255,0.5)'
+                  borderColor = 'rgba(255,255,255,0.65)'
                   color = '#0E0E0E'
                 } else if (isPriority) {
-                  bg = 'rgba(255,255,255,0.12)'
+                  bg = 'rgba(255,255,255,0.14)'
                   borderColor = 'rgba(255,255,255,0.22)'
-                  color = 'rgba(0,0,0,0.7)'
+                  color = 'rgba(0,0,0,0.55)'
                 }
-                // empty non-priority: no bg, no border, color = rgba(0,0,0,0.6) from above
               }
 
               // ── Soccer ball logic ────────────────────────────────
@@ -253,8 +258,9 @@ export default function CalendarGrid({
               const ballCategory = hasEvents
                 ? (eventCategories?.get(dateStr) ?? 'watch_party')
                 : 'watch_party'
-              const ballColor = getCategoryMeta(ballCategory).color
-              const ballOpacity = hasEvents ? 1 : 0.4
+              // Grey for priority-no-event, category color for real events
+              const ballColor = hasEvents ? getCategoryMeta(ballCategory).color : 'rgba(0,0,0,0.2)'
+              const ballOpacity = 1
 
               // ── Cell style ───────────────────────────────────────
               const cellStyle: React.CSSProperties = {
