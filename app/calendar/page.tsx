@@ -3,10 +3,11 @@ import CalendarView from '@/components/Calendar/CalendarView'
 
 export const revalidate = 60
 
-export default async function CalendarPage() {
+export default async function CalendarPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
+  const { date: initialDate } = await searchParams
   const hasSupabase = !!process.env.NEXT_PUBLIC_SUPABASE_URL
 
-  if (!hasSupabase) return <CalendarView events={[]} draftDates={new Set()} />
+  if (!hasSupabase) return <CalendarView events={[]} draftDates={new Set()} initialDate={initialDate} />
 
   // Fetch published events (full data — shown as cards)
   const { data: published } = await supabase
@@ -32,5 +33,5 @@ export default async function CalendarPage() {
       .filter(d => !publishedDates.has(d))
   )
 
-  return <CalendarView events={events} draftDates={draftDates} />
+  return <CalendarView events={events} draftDates={draftDates} initialDate={initialDate} />
 }

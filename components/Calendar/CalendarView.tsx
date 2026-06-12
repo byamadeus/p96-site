@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { Drawer } from 'vaul'
@@ -41,10 +42,17 @@ function fmtViewHeader(dateStr: string): string {
 
 type ViewSlide = 'hidden' | 'visible' | 'exiting'
 
-export default function CalendarView({ events, draftDates = new Set() }: { events: Event[]; draftDates?: Set<string> }) {
+function parseInitialMonth(date: string | undefined): number {
+  if (!date) return MIN_MONTH
+  const m = parseInt(date.split('-')[1], 10)
+  return m >= MIN_MONTH && m <= MAX_MONTH ? m : MIN_MONTH
+}
+
+export default function CalendarView({ events, draftDates = new Set(), initialDate }: { events: Event[]; draftDates?: Set<string>; initialDate?: string }) {
   const store = useAppStore()
-  const [month, setMonth] = useState(MIN_MONTH)
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
+  const router = useRouter()
+  const [month, setMonth] = useState(() => parseInitialMonth(initialDate))
+  const [selectedDate, setSelectedDate] = useState<string | null>(initialDate ?? null)
   const [viewMode, setViewMode] = useState(false)
   const [viewSlide, setViewSlide] = useState<ViewSlide>('hidden')
   const [monthVisible, setMonthVisible] = useState(true)
@@ -65,7 +73,17 @@ export default function CalendarView({ events, draftDates = new Set() }: { event
 
   useEffect(() => {
     store.loadFromCookie()
-    setSelectedDate(getNextEventDate(new Set(events.map(e => e.date))))
+    const eventDates = new Set(events.map(e => e.date))
+    if (initialDate && eventDates.has(initialDate)) {
+      const mobile = window.innerWidth < 768
+      if (mobile) {
+        setDrawerOpen(true)
+      } else {
+        openViewMode()
+      }
+    } else if (!initialDate) {
+      setSelectedDate(getNextEventDate(eventDates))
+    }
     const check = () => setIsMobile(window.innerWidth < 768)
     check()
     window.addEventListener('resize', check)
@@ -126,6 +144,7 @@ export default function CalendarView({ events, draftDates = new Set() }: { event
     setTimeout(() => {
       setMonth(m => m + dir)
       setSelectedDate(null)
+      router.replace('/calendar', { scroll: false })
       if (viewMode) closeViewMode()
       requestAnimationFrame(() => requestAnimationFrame(() => setMonthVisible(true)))
     }, 200)
@@ -133,6 +152,7 @@ export default function CalendarView({ events, draftDates = new Set() }: { event
 
   function handleDateSelect(date: string) {
     setSelectedDate(date)
+    router.replace(`/calendar?date=${date}`, { scroll: false })
     if (!allEventDates.has(date)) {
       setShowLeadCapture(true)
       return
