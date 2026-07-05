@@ -107,9 +107,10 @@ export default function EventCard({ event, match, focal = false }: EventCardProp
           const today = new Date()
           today.setHours(0, 0, 0, 0)
           const isPast = new Date(event.date + 'T00:00:00') < today
-          if (isPast && event.recap_url) {
+          const recapHref = event.recap_url || 'https://www.instagram.com/p.9.6/'
+          if (isPast) {
             return (
-              <a href={event.recap_url} target="_blank" rel="noopener noreferrer" style={{
+              <a href={recapHref} target="_blank" rel="noopener noreferrer" style={{
                 display: 'block', padding: '11px', borderRadius: 8,
                 background: '#111', color: '#fff',
                 fontSize: 12, fontWeight: 800, textAlign: 'center',
@@ -120,7 +121,7 @@ export default function EventCard({ event, match, focal = false }: EventCardProp
               </a>
             )
           }
-          if (!isPast && event.rsvp_url) {
+          if (event.rsvp_url) {
             return (
               <a href={event.rsvp_url} target="_blank" rel="noopener noreferrer" style={{
                 display: 'block', padding: '11px', borderRadius: 8,
