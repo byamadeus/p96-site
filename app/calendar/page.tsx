@@ -20,16 +20,12 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   const events = (published ?? []) as Event[]
   const publishedDates = new Set(events.map(e => e.date))
 
-  // Fetch draft dates only (no content exposed to client)
-  const { data: drafts } = await supabase
-    .from('events')
-    .select('date')
-    .eq('is_published', false)
+  // Fetch draft dates via SECURITY DEFINER function (bypasses RLS, returns dates only — no draft content exposed)
+  const { data: draftRows } = await supabase.rpc('get_draft_dates')
 
   // Only lock dates where drafts exist but NO published event on that date
   const draftDates = new Set(
-    (drafts ?? [])
-      .map(d => d.date as string)
+    ((draftRows ?? []) as string[])
       .filter(d => !publishedDates.has(d))
   )
 
