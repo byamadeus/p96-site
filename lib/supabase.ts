@@ -45,6 +45,7 @@ export interface Event {
   additional_links: { label: string; url: string }[] | null
   game_id: number | null
   is_published: boolean
+  recap_url?: string | null
 }
 
 export interface Intake {

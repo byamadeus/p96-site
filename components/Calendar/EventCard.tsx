@@ -103,21 +103,42 @@ export default function EventCard({ event, match, focal = false }: EventCardProp
           )}
         </div>
 
-        {event.rsvp_url ? (
-          <a href={event.rsvp_url} target="_blank" rel="noopener noreferrer" style={{
-            display: 'block', padding: '11px', borderRadius: 8,
-            background: '#111', color: '#fff',
-            fontSize: 12, fontWeight: 800, textAlign: 'center',
-            textDecoration: 'none', fontFamily: 'var(--font-display)',
-            letterSpacing: '0.04em', textTransform: 'uppercase',
-          }}>
-            RSVP →
-          </a>
-        ) : (
-          <p style={{ fontSize: 12, color: '#999', fontFamily: 'var(--font-body)', textAlign: 'center', margin: 0 }}>
-            Free entry — no RSVP needed
-          </p>
-        )}
+        {(() => {
+          const today = new Date()
+          today.setHours(0, 0, 0, 0)
+          const isPast = new Date(event.date + 'T00:00:00') < today
+          if (isPast && event.recap_url) {
+            return (
+              <a href={event.recap_url} target="_blank" rel="noopener noreferrer" style={{
+                display: 'block', padding: '11px', borderRadius: 8,
+                background: '#111', color: '#fff',
+                fontSize: 12, fontWeight: 800, textAlign: 'center',
+                textDecoration: 'none', fontFamily: 'var(--font-display)',
+                letterSpacing: '0.04em', textTransform: 'uppercase',
+              }}>
+                RECAP →
+              </a>
+            )
+          }
+          if (!isPast && event.rsvp_url) {
+            return (
+              <a href={event.rsvp_url} target="_blank" rel="noopener noreferrer" style={{
+                display: 'block', padding: '11px', borderRadius: 8,
+                background: '#111', color: '#fff',
+                fontSize: 12, fontWeight: 800, textAlign: 'center',
+                textDecoration: 'none', fontFamily: 'var(--font-display)',
+                letterSpacing: '0.04em', textTransform: 'uppercase',
+              }}>
+                RSVP →
+              </a>
+            )
+          }
+          return (
+            <p style={{ fontSize: 12, color: '#999', fontFamily: 'var(--font-body)', textAlign: 'center', margin: 0 }}>
+              Free entry — no RSVP needed
+            </p>
+          )
+        })()}
       </div>
     </WhiteCard>
   )

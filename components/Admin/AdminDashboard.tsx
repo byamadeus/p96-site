@@ -34,7 +34,10 @@ export default function AdminDashboard() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<AdminTab>('calendar')
-  const [month, setMonth] = useState(MIN_MONTH)
+  const [month, setMonth] = useState(() => {
+    const m = new Date().getMonth() + 1
+    return m >= MIN_MONTH && m <= MAX_MONTH ? m : MIN_MONTH
+  })
   const [monthVisible, setMonthVisible] = useState(true)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState(false)

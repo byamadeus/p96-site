@@ -15,6 +15,7 @@ const EMPTY: Omit<Event, 'id' | 'created_at'> = {
   location_address: '',
   flier_url: '',
   rsvp_url: '',
+  recap_url: '',
   additional_links: [],
   game_id: null,
   is_published: false,
@@ -73,6 +74,7 @@ export default function EventForm({ existing, initialDate, onSaved, onCancel }: 
           location_address: existing.location_address ?? '',
           flier_url: existing.flier_url ?? '',
           rsvp_url: existing.rsvp_url ?? '',
+          recap_url: existing.recap_url ?? '',
           additional_links: existing.additional_links ?? [],
           game_id: existing.game_id,
           is_published: existing.is_published,
@@ -131,6 +133,7 @@ export default function EventForm({ existing, initialDate, onSaved, onCancel }: 
       location_address: form.location_address || null,
       flier_url: form.flier_url || null,
       rsvp_url: form.rsvp_url || null,
+      recap_url: form.recap_url || null,
       additional_links: form.additional_links?.length ? form.additional_links : null,
       game_id: form.game_id || null,
     }
@@ -192,6 +195,10 @@ export default function EventForm({ existing, initialDate, onSaved, onCancel }: 
 
       <Field name="RSVP link">
         <input style={input} value={form.rsvp_url ?? ''} onChange={e => set('rsvp_url', e.target.value)} placeholder="https://lu.ma/..." />
+      </Field>
+
+      <Field name="Recap media link">
+        <input style={input} value={form.recap_url ?? ''} onChange={e => set('recap_url', e.target.value)} placeholder="https://instagram.com/..." />
       </Field>
 
       <Field name="Flier image">

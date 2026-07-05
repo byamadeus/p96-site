@@ -43,9 +43,12 @@ function fmtViewHeader(dateStr: string): string {
 type ViewSlide = 'hidden' | 'visible' | 'exiting'
 
 function parseInitialMonth(date: string | undefined): number {
-  if (!date) return MIN_MONTH
-  const m = parseInt(date.split('-')[1], 10)
-  return m >= MIN_MONTH && m <= MAX_MONTH ? m : MIN_MONTH
+  if (date) {
+    const m = parseInt(date.split('-')[1], 10)
+    return m >= MIN_MONTH && m <= MAX_MONTH ? m : MIN_MONTH
+  }
+  const current = new Date().getMonth() + 1
+  return current >= MIN_MONTH && current <= MAX_MONTH ? current : MIN_MONTH
 }
 
 export default function CalendarView({ events, draftDates = new Set(), initialDate }: { events: Event[]; draftDates?: Set<string>; initialDate?: string }) {
