@@ -159,11 +159,16 @@ export default function EventForm({ existing, initialDate, onSaved, onCancel }: 
       <Field name="Category">
         <select style={{ ...input, cursor: 'pointer' }} value={form.category} onChange={e => set('category', e.target.value as EventCategory)}>
           <option value="watch_party">World Cup Watch Party</option>
-          <option value="talks">Talks</option>
-          <option value="workshop">Workshop</option>
           <option value="hangout">Hangout</option>
-          <option value="collaboration">Collaboration</option>
-          <option value="film_screening">Film Screening</option>
+          <option value="entertainment">Entertainment</option>
+          <option value="education_workshops">Education / Workshops</option>
+          <option value="wellness">Wellness</option>
+          <option value="art">Art</option>
+          <option value="music">Music</option>
+          <option value="fashion">Fashion</option>
+          <option value="film">Film</option>
+          <option value="athletic">Athletic</option>
+          <option value="food">Food</option>
         </select>
       </Field>
 

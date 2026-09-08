@@ -4,7 +4,7 @@
 
 import Link from 'next/link'
 import { useEffect } from 'react'
-import './world-cup/world-cup.css'
+import './world-cup2026/world-cup.css'
 
 const WHEEL_REF = 400
 const COG_DUR = 6

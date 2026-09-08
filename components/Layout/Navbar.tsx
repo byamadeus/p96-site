@@ -9,7 +9,7 @@ interface NavbarProps {
   light?: boolean
 }
 
-const DISABLED_ITEMS = new Set<string>([])
+const DISABLED_ITEMS = new Set<string>(['KICKSTARTER'])
 
 function DisabledNavItem({ label, light }: { label: string; light: boolean }) {
   const [hovered, setHovered] = useState(false)
@@ -51,7 +51,7 @@ export default function Navbar({ light = false }: NavbarProps) {
       </Link>
 
       <div style={{ display: 'flex', gap: 'var(--space-6)', alignItems: 'center' }}>
-        {(['EVENTS', 'SHOP', 'ABOUT'] as const).map(item => {
+        {(['EVENTS', 'KICKSTARTER', 'SHOP', 'ABOUT'] as const).map(item => {
           if (DISABLED_ITEMS.has(item)) {
             return <DisabledNavItem key={item} label={item} light={light} />
           }

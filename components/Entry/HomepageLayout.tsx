@@ -43,9 +43,9 @@ export default function HomepageLayout() {
         {/* Bottom nav block */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 
-          {/* WORLD CUP — active */}
+          {/* EVENTS — active */}
           <Link
-            href="/world-cup"
+            href="/calendar"
             onMouseEnter={() => setHovered('events')}
             onMouseLeave={() => setHovered(null)}
             style={{
@@ -64,8 +64,31 @@ export default function HomepageLayout() {
             }}
           >
             <span style={{ fontSize: 'clamp(40px, 9vw, 64px)', textTransform: 'uppercase' }}>
-              WORLD CUP
+              EVENTS
             </span>
+          </Link>
+
+          {/* KICKSTARTER — placeholder */}
+          <Link
+            href="#"
+            onClick={e => e.preventDefault()}
+            onMouseEnter={() => setHovered('kickstarter')}
+            onMouseLeave={() => setHovered(null)}
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(40px, 9vw, 64px)',
+              fontWeight: 800,
+              lineHeight: 0.95,
+              letterSpacing: '-0.03em',
+              color: '#ffffff',
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              cursor: 'default',
+              opacity: hovered === 'kickstarter' ? 0.7 : 1,
+              transition: 'opacity 0.2s',
+            }}
+          >
+            KICKSTARTER
           </Link>
 
           {/* SHOP */}

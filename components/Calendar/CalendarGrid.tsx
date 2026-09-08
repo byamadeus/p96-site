@@ -28,9 +28,10 @@ interface DateStripProps {
   onSelectDate: (date: string) => void
   light?: boolean
   adminMode?: boolean
+  wcMode?: boolean
 }
 
-export function DateStrip({ year, month, eventDates, selectedDate, onSelectDate, light = false, adminMode = false }: DateStripProps) {
+export function DateStrip({ year, month, eventDates, selectedDate, onSelectDate, light = false, adminMode = false, wcMode = true }: DateStripProps) {
   const daysInMonth = new Date(year, month, 0).getDate()
   const monthName = new Date(year, month - 1, 1)
     .toLocaleString('en-US', { month: 'short' })
@@ -56,7 +57,7 @@ export function DateStrip({ year, month, eventDates, selectedDate, onSelectDate,
       <div style={{ padding: '4px 6px 20px', display: 'flex', flexDirection: 'column', gap: 1 }}>
         {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
           const dateStr = isoDate(year, month, day)
-          const isPriority = PRIORITY_DATES.has(dateStr)
+          const isPriority = wcMode && PRIORITY_DATES.has(dateStr)
           const hasEvents = eventDates.has(dateStr)
           const isSelected = selectedDate === dateStr
           const isInteractive = adminMode ? true : (hasEvents || isPriority)
@@ -174,6 +175,7 @@ interface CalendarGridProps {
   isMobile?: boolean
   extraPriorityDates?: Set<string>
   matchDays?: Map<string, MatchDay>
+  wcMode?: boolean
 
 }
 
@@ -181,6 +183,7 @@ export default function CalendarGrid({
   year, month, eventDates, selectedDate, onSelectDate,
   compact = false, light = false, adminMode = false,
   eventCategories, isMobile = false, extraPriorityDates, matchDays,
+  wcMode = true,
 }: CalendarGridProps) {
   const firstDay = new Date(year, month - 1, 1).getDay()
   const daysInMonth = new Date(year, month, 0).getDate()
@@ -266,7 +269,7 @@ export default function CalendarGrid({
               }
 
               const dateStr = isoDate(year, month, day)
-              const isPriority = PRIORITY_DATES.has(dateStr) || (extraPriorityDates?.has(dateStr) ?? false)
+              const isPriority = wcMode && (PRIORITY_DATES.has(dateStr) || (extraPriorityDates?.has(dateStr) ?? false))
               const hasEvents = eventDates.has(dateStr)
               const isSelected = selectedDate === dateStr
               const isInteractive = adminMode ? true : (hasEvents || isPriority)
@@ -314,15 +317,15 @@ export default function CalendarGrid({
               }
 
               // ── Icons logic ──────────────────────────────────────
-              const matchDay = !compact ? matchDays?.get(dateStr) : undefined
+              const matchDay = (!compact && wcMode) ? matchDays?.get(dateStr) : undefined
               const ballCategory = eventCategories?.get(dateStr) ?? 'watch_party'
               const ballColor = getCategoryMeta(ballCategory).color
               // locked = priority date with no published events (not in admin)
               const showLock = !compact && isPriority && !hasEvents && !adminMode
               // ball always shown when events exist
               const showBall = !compact && hasEvents
-              // flags only on desktop (not isMobile) when events + game day
-              const showFlags = showBall && !!matchDay && !isMobile
+              // flags only on desktop (not isMobile) when events + game day, WC mode only
+              const showFlags = wcMode && showBall && !!matchDay && !isMobile
 
               // ── Cell style ───────────────────────────────────────
               const cellStyle: React.CSSProperties = {
@@ -386,7 +389,7 @@ export default function CalendarGrid({
                         </div>
                       )}
 
-                      {/* Soccer ball — top right when game day (desktop), bottom right otherwise */}
+                      {/* Category marker — soccer ball in WC mode, plain dot otherwise */}
                       {showBall && (
                         <div style={{
                           position: 'absolute',
@@ -400,13 +403,15 @@ export default function CalendarGrid({
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           flexShrink: 0,
                         }}>
-                          <span className="material-icons" style={{
-                            fontSize: 'clamp(14px, 1.8vw, 22px)',
-                            color: '#FFFFFF', lineHeight: 1,
-                            userSelect: 'none', display: 'block',
-                          }}>
-                            sports_soccer
-                          </span>
+                          {wcMode && (
+                            <span className="material-icons" style={{
+                              fontSize: 'clamp(14px, 1.8vw, 22px)',
+                              color: '#FFFFFF', lineHeight: 1,
+                              userSelect: 'none', display: 'block',
+                            }}>
+                              sports_soccer
+                            </span>
+                          )}
                         </div>
                       )}
 

@@ -11,13 +11,14 @@ import PageFooter from '@/components/Layout/PageFooter'
 import CalendarGrid, { DateStrip } from './CalendarGrid'
 import EventCarousel from './EventCarousel'
 import LeadCaptureModal from './LeadCaptureModal'
+import CategoryFilterPanel from './CategoryFilterPanel'
 import { matches, Match } from '@/data/matches'
 import { Event } from '@/lib/supabase'
 import { useAppStore } from '@/lib/store'
 
-const YEAR = 2026
-const MIN_MONTH = 6
-const MAX_MONTH = 7
+const WC_YEAR = 2026
+const WC_MIN_MONTH = 6
+const WC_MAX_MONTH = 7
 
 function getNextEventDate(eventDates: Set<string>): string | null {
   const today = new Date()
@@ -42,20 +43,26 @@ function fmtViewHeader(dateStr: string): string {
 
 type ViewSlide = 'hidden' | 'visible' | 'exiting'
 
-function parseInitialMonth(date: string | undefined): number {
-  if (date) {
-    const m = parseInt(date.split('-')[1], 10)
-    return m >= MIN_MONTH && m <= MAX_MONTH ? m : MIN_MONTH
+function parseInitial(date: string | undefined, wcMode: boolean): { year: number; month: number } {
+  if (wcMode) {
+    const m = date ? parseInt(date.split('-')[1], 10) : new Date().getMonth() + 1
+    const month = m >= WC_MIN_MONTH && m <= WC_MAX_MONTH ? m : WC_MIN_MONTH
+    return { year: WC_YEAR, month }
   }
-  const current = new Date().getMonth() + 1
-  return current >= MIN_MONTH && current <= MAX_MONTH ? current : MIN_MONTH
+  if (date) {
+    const [y, m] = date.split('-').map(Number)
+    return { year: y, month: m }
+  }
+  const now = new Date()
+  return { year: now.getFullYear(), month: now.getMonth() + 1 }
 }
 
-export default function CalendarView({ events, draftDates = new Set(), initialDate }: { events: Event[]; draftDates?: Set<string>; initialDate?: string }) {
+export default function CalendarView({ events, draftDates = new Set(), initialDate, wcMode = true }: { events: Event[]; draftDates?: Set<string>; initialDate?: string; wcMode?: boolean }) {
   const store = useAppStore()
   const router = useRouter()
-  const [month, setMonth] = useState(() => parseInitialMonth(initialDate))
+  const [{ year, month }, setYearMonth] = useState(() => parseInitial(initialDate, wcMode))
   const [selectedDate, setSelectedDate] = useState<string | null>(initialDate ?? null)
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set())
   const [viewMode, setViewMode] = useState(false)
   const [viewSlide, setViewSlide] = useState<ViewSlide>('hidden')
   const [monthVisible, setMonthVisible] = useState(true)
@@ -96,40 +103,41 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
   }, [])
 
 
-  const allEventDates = new Set(events.map(e => e.date))
+  const filteredEvents = selectedCategories.size === 0
+    ? events
+    : events.filter(e => selectedCategories.has(e.category))
 
-  // First category per date — drives soccer ball color in CalendarGrid
+  const allEventDates = new Set(filteredEvents.map(e => e.date))
+
+  // First category per date — drives category dot color in CalendarGrid
   const eventCategories = new Map<string, string>()
-  events.forEach(e => { if (!eventCategories.has(e.date)) eventCategories.set(e.date, e.category) })
+  filteredEvents.forEach(e => { if (!eventCategories.has(e.date)) eventCategories.set(e.date, e.category) })
 
-  // Match day flags — highest activationScore diaspora game per date, + total count
-  const matchCountByDate = new Map<string, number>()
-  matches.forEach(m => matchCountByDate.set(m.date, (matchCountByDate.get(m.date) ?? 0) + 1))
-
-  // Hardcoded overrides: force a specific match ID to display for a given date
-  const MATCH_DAY_OVERRIDES: Record<string, number> = {
-    '2026-06-13': 2, // Brazil vs Morocco (id:2) — override Haiti/Scotland
-  }
-
+  // Match day flags (WC mode only) — highest activationScore diaspora game per date, + total count
   const matchDays = new Map<string, { codeA: string; codeB: string; count: number }>()
-  // Group by date, pick best diaspora match (highest activationScore), fallback to first
-  const byDate = new Map<string, typeof matches>()
-  matches.forEach(m => { const arr = byDate.get(m.date) ?? []; arr.push(m); byDate.set(m.date, arr) })
-  byDate.forEach((dayMatches, date) => {
-    const overrideId = MATCH_DAY_OVERRIDES[date]
-    const best = overrideId
-      ? (dayMatches.find(m => m.id === overrideId) ?? dayMatches[0])
-      : (() => {
-          const diaspora = dayMatches.filter(m => m.teamA.isDiaspora || m.teamB.isDiaspora)
-          const pool = diaspora.length > 0 ? diaspora : dayMatches
-          return pool.reduce((a, b) => b.activationScore >= a.activationScore ? b : a)
-        })()
-    matchDays.set(date, {
-      codeA: best.teamA.code.toLowerCase(),
-      codeB: best.teamB.code.toLowerCase(),
-      count: dayMatches.length,
+  if (wcMode) {
+    // Hardcoded overrides: force a specific match ID to display for a given date
+    const MATCH_DAY_OVERRIDES: Record<string, number> = {
+      '2026-06-13': 2, // Brazil vs Morocco (id:2) — override Haiti/Scotland
+    }
+    const byDate = new Map<string, typeof matches>()
+    matches.forEach(m => { const arr = byDate.get(m.date) ?? []; arr.push(m); byDate.set(m.date, arr) })
+    byDate.forEach((dayMatches, date) => {
+      const overrideId = MATCH_DAY_OVERRIDES[date]
+      const best = overrideId
+        ? (dayMatches.find(m => m.id === overrideId) ?? dayMatches[0])
+        : (() => {
+            const diaspora = dayMatches.filter(m => m.teamA.isDiaspora || m.teamB.isDiaspora)
+            const pool = diaspora.length > 0 ? diaspora : dayMatches
+            return pool.reduce((a, b) => b.activationScore >= a.activationScore ? b : a)
+          })()
+      matchDays.set(date, {
+        codeA: best.teamA.code.toLowerCase(),
+        codeB: best.teamB.code.toLowerCase(),
+        count: dayMatches.length,
+      })
     })
-  })
+  }
 
   function openViewMode() {
     setViewMode(true)
@@ -142,12 +150,27 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
     setTimeout(() => { setViewMode(false); setViewSlide('hidden') }, 250)
   }
 
+  function toggleCategory(cat: string) {
+    setSelectedCategories(prev => {
+      const next = new Set(prev)
+      if (next.has(cat)) next.delete(cat)
+      else next.add(cat)
+      return next
+    })
+  }
+
   function changeMonth(dir: 1 | -1) {
     setMonthVisible(false)
     setTimeout(() => {
-      setMonth(m => m + dir)
+      setYearMonth(({ year, month }) => {
+        let nextMonth = month + dir
+        let nextYear = year
+        if (nextMonth < 1) { nextMonth = 12; nextYear -= 1 }
+        if (nextMonth > 12) { nextMonth = 1; nextYear += 1 }
+        return { year: nextYear, month: nextMonth }
+      })
       setSelectedDate(null)
-      router.replace('/calendar', { scroll: false })
+      router.replace(wcMode ? '/world-cup2026/calendar' : '/calendar', { scroll: false })
       if (viewMode) closeViewMode()
       requestAnimationFrame(() => requestAnimationFrame(() => setMonthVisible(true)))
     }, 200)
@@ -155,7 +178,7 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
 
   function handleDateSelect(date: string) {
     setSelectedDate(date)
-    router.replace(`/calendar?date=${date}`, { scroll: false })
+    router.replace(`${wcMode ? '/world-cup2026/calendar' : '/calendar'}?date=${date}`, { scroll: false })
     if (!allEventDates.has(date)) {
       setShowLeadCapture(true)
       return
@@ -168,7 +191,7 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
   }
 
   const eventsForDate = selectedDate
-    ? events.filter(e => e.date === selectedDate)
+    ? filteredEvents.filter(e => e.date === selectedDate)
     : []
   // locked = no published events for selected date
   const locked = selectedDate ? !allEventDates.has(selectedDate) : false
@@ -211,18 +234,18 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
             color: 'rgba(0,0,0,0.65)', marginBottom: 14,
             maxWidth: '100%', wordBreak: 'break-word',
           }}>
-            Diaspora World Cup Activation Calendar
+            {wcMode ? 'Diaspora World Cup Activation Calendar' : 'P96 Events Calendar'}
           </p>
 
           {/* Month nav — display font, centered */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
             <button
-              onClick={() => month > MIN_MONTH && changeMonth(-1)}
-              disabled={month === MIN_MONTH}
+              onClick={() => (!wcMode || month > WC_MIN_MONTH) && changeMonth(-1)}
+              disabled={wcMode && month === WC_MIN_MONTH}
               style={{
                 background: 'none', border: 'none', padding: '4px',
-                cursor: month === MIN_MONTH ? 'default' : 'pointer',
-                color: month === MIN_MONTH ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.6)',
+                cursor: (wcMode && month === WC_MIN_MONTH) ? 'default' : 'pointer',
+                color: (wcMode && month === WC_MIN_MONTH) ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.6)',
                 display: 'flex', alignItems: 'center', transition: 'color 0.15s',
               }}
             >
@@ -238,16 +261,16 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
               color: '#0E0E0E',
               lineHeight: 1,
             }}>
-              {month === 6 ? 'June' : 'July'} 2026
+              {new Date(year, month - 1, 1).toLocaleString('en-US', { month: 'long' })} {year}
             </span>
 
             <button
-              onClick={() => month < MAX_MONTH && changeMonth(1)}
-              disabled={month === MAX_MONTH}
+              onClick={() => (!wcMode || month < WC_MAX_MONTH) && changeMonth(1)}
+              disabled={wcMode && month === WC_MAX_MONTH}
               style={{
                 background: 'none', border: 'none', padding: '4px',
-                cursor: month === MAX_MONTH ? 'default' : 'pointer',
-                color: month === MAX_MONTH ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.6)',
+                cursor: (wcMode && month === WC_MAX_MONTH) ? 'default' : 'pointer',
+                color: (wcMode && month === WC_MAX_MONTH) ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.6)',
                 display: 'flex', alignItems: 'center', transition: 'color 0.15s',
               }}
             >
@@ -255,6 +278,17 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
             </button>
           </div>
         </div>
+
+        {/* Category filter — evergreen calendar only */}
+        {!wcMode && (
+          <div style={{ flexShrink: 0, marginBottom: 4 }}>
+            <CategoryFilterPanel
+              selected={selectedCategories}
+              onToggle={toggleCategory}
+              onClear={() => setSelectedCategories(new Set())}
+            />
+          </div>
+        )}
 
         {/* Calendar */}
         <div style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', width: '100%' }}>
@@ -266,7 +300,7 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
               transition: 'opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out)',
             }}>
               <CalendarGrid
-                year={YEAR} month={month}
+                year={year} month={month}
                 eventDates={allEventDates}
                 selectedDate={selectedDate}
                 onSelectDate={handleDateSelect}
@@ -274,6 +308,7 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
                 extraPriorityDates={draftDates}
                 matchDays={matchDays}
                 isMobile={isMobile}
+                wcMode={wcMode}
               />
             </div>
           </div>
@@ -412,7 +447,7 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
               overflowX: 'hidden',
             }}>
               <DateStrip
-                year={YEAR} month={month}
+                year={year} month={month}
                 eventDates={allEventDates}
                 selectedDate={selectedDate}
                 onSelectDate={date => {
@@ -424,6 +459,7 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
                   setSelectedDate(date)
                 }}
                 light
+                wcMode={wcMode}
               />
             </div>
 

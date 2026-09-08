@@ -7,21 +7,31 @@ export const supabase = createClient(url, key)
 
 export type EventCategory =
   | 'watch_party'
-  | 'talks'
-  | 'workshop'
   | 'hangout'
-  | 'collaboration'
-  | 'film_screening'
+  | 'entertainment'
+  | 'education_workshops'
+  | 'wellness'
+  | 'art'
+  | 'music'
+  | 'fashion'
+  | 'film'
+  | 'athletic'
+  | 'food'
 
 const FALLBACK_META = { label: 'EVENT', color: 'var(--c-text-muted)', bg: 'var(--c-surface)', border: 'var(--c-border)' }
 
 const _CATEGORY_META: Record<EventCategory, { label: string; color: string; bg: string; border: string }> = {
-  watch_party:   { label: 'WATCH PARTY',   color: 'var(--c-gold)',       bg: 'rgba(255,218,68,0.07)',  border: 'var(--c-gold)' },
-  talks:         { label: 'TALKS',         color: 'var(--c-blue)',       bg: 'rgba(27,79,216,0.07)',   border: 'var(--c-blue)' },
-  workshop:      { label: 'WORKSHOP',      color: 'var(--c-orange)',     bg: 'rgba(249,123,34,0.07)',  border: 'var(--c-orange)' },
-  hangout:       { label: 'HANGOUT',       color: 'var(--c-green)',      bg: 'rgba(26,127,60,0.07)',   border: 'var(--c-green)' },
-  collaboration: { label: 'COLLAB',        color: 'var(--c-red)',        bg: 'rgba(232,65,44,0.07)',   border: 'var(--c-red)' },
-  film_screening:{ label: 'FILM',          color: 'var(--c-text-muted)', bg: 'var(--c-surface)',       border: 'var(--c-border)' },
+  watch_party:         { label: 'WATCH PARTY',        color: 'var(--c-gold)',       bg: 'rgba(255,218,68,0.07)',  border: 'var(--c-gold)' },
+  hangout:             { label: 'HANGOUT',             color: 'var(--c-green)',      bg: 'rgba(26,127,60,0.07)',   border: 'var(--c-green)' },
+  entertainment:       { label: 'ENTERTAINMENT',       color: 'var(--c-red)',        bg: 'rgba(232,65,44,0.07)',   border: 'var(--c-red)' },
+  education_workshops: { label: 'EDUCATION / WORKSHOPS', color: 'var(--c-orange)',   bg: 'rgba(249,123,34,0.07)',  border: 'var(--c-orange)' },
+  wellness:            { label: 'WELLNESS',            color: 'var(--c-green)',      bg: 'rgba(26,127,60,0.07)',   border: 'var(--c-green)' },
+  art:                 { label: 'ART',                 color: 'var(--c-blue)',       bg: 'rgba(27,79,216,0.07)',   border: 'var(--c-blue)' },
+  music:               { label: 'MUSIC',                color: 'var(--c-red)',       bg: 'rgba(232,65,44,0.07)',   border: 'var(--c-red)' },
+  fashion:             { label: 'FASHION',             color: 'var(--c-gold)',       bg: 'rgba(255,218,68,0.07)',  border: 'var(--c-gold)' },
+  film:                { label: 'FILM',                color: 'var(--c-text-muted)', bg: 'var(--c-surface)',       border: 'var(--c-border)' },
+  athletic:            { label: 'ATHLETIC',            color: 'var(--c-blue)',       bg: 'rgba(27,79,216,0.07)',   border: 'var(--c-blue)' },
+  food:                { label: 'FOOD',                 color: 'var(--c-orange)',    bg: 'rgba(249,123,34,0.07)',  border: 'var(--c-orange)' },
 }
 
 export function getCategoryMeta(cat: string) {
