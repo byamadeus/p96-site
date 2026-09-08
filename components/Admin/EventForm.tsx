@@ -3,12 +3,11 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { supabase, Event, EventCategory } from '@/lib/supabase'
-import { matches } from '@/data/matches'
 
 const EMPTY: Omit<Event, 'id' | 'created_at'> = {
   title: '',
   description: '',
-  category: 'watch_party',
+  category: '' as EventCategory,
   date: '',
   time: '',
   location_name: '',
@@ -156,9 +155,9 @@ export default function EventForm({ existing, initialDate, onSaved, onCancel }: 
         <input style={input} required value={form.title} onChange={e => set('title', e.target.value)} placeholder="Morocco Watch Party" />
       </Field>
 
-      <Field name="Category">
-        <select style={{ ...input, cursor: 'pointer' }} value={form.category} onChange={e => set('category', e.target.value as EventCategory)}>
-          <option value="watch_party">World Cup Watch Party</option>
+      <Field name="Category *">
+        <select style={{ ...input, cursor: 'pointer' }} required value={form.category} onChange={e => set('category', e.target.value as EventCategory)}>
+          <option value="" disabled>Select category</option>
           <option value="hangout">Hangout</option>
           <option value="entertainment">Entertainment</option>
           <option value="education_workshops">Education / Workshops</option>
@@ -169,6 +168,7 @@ export default function EventForm({ existing, initialDate, onSaved, onCancel }: 
           <option value="film">Film</option>
           <option value="athletic">Athletic</option>
           <option value="food">Food</option>
+          <option value="watch_party">World Cup Watch Party</option>
         </select>
       </Field>
 
@@ -229,17 +229,6 @@ export default function EventForm({ existing, initialDate, onSaved, onCancel }: 
             <img src={form.flier_url} alt="Flier preview" style={{ width: '100%', borderRadius: 8, maxHeight: 200, objectFit: 'cover' }} />
           )}
         </div>
-      </Field>
-
-      <Field name="Attach to WC match (optional)">
-        <select style={{ ...input, cursor: 'pointer' }} value={form.game_id ?? ''} onChange={e => set('game_id', e.target.value ? Number(e.target.value) : null)}>
-          <option value="">None</option>
-          {matches.map(m => (
-            <option key={m.id} value={m.id}>
-              {m.date} · {m.teamA.name} vs {m.teamB.name} · {m.city}
-            </option>
-          ))}
-        </select>
       </Field>
 
       {/* Additional links */}
