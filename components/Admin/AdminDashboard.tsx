@@ -11,9 +11,6 @@ import ShimmerBar from '@/components/Layout/ShimmerBar'
 import PageFooter from '@/components/Layout/PageFooter'
 import EventCard from '@/components/Calendar/EventCard'
 
-const YEAR = 2026
-const MIN_MONTH = 6
-const MAX_MONTH = 7
 const PAGE_GRADIENT = 'radial-gradient(ellipse at 70% 50%, #FFFFFF 0%, #C5E8F5 42%, #7BBAD6 100%)'
 
 function fmtDateLabel(dateStr: string): string {
@@ -27,6 +24,12 @@ function fmtDateShort(dateStr: string): string {
     .toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
+function fmtMonthHeader(dateStr: string): string {
+  return new Date(dateStr + 'T00:00:00')
+    .toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    .toUpperCase()
+}
+
 type AdminTab = 'calendar' | 'list'
 type ViewSlide = 'hidden' | 'visible' | 'exiting'
 
@@ -34,9 +37,9 @@ export default function AdminDashboard() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<AdminTab>('calendar')
-  const [month, setMonth] = useState(() => {
-    const m = new Date().getMonth() + 1
-    return m >= MIN_MONTH && m <= MAX_MONTH ? m : MIN_MONTH
+  const [{ year, month }, setYearMonth] = useState(() => {
+    const now = new Date()
+    return { year: now.getFullYear(), month: now.getMonth() + 1 }
   })
   const [monthVisible, setMonthVisible] = useState(true)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -91,7 +94,24 @@ export default function AdminDashboard() {
   function changeMonth(dir: 1 | -1) {
     setMonthVisible(false)
     setTimeout(() => {
-      setMonth(m => m + dir)
+      setYearMonth(({ year, month }) => {
+        let nextMonth = month + dir
+        let nextYear = year
+        if (nextMonth < 1) { nextMonth = 12; nextYear -= 1 }
+        if (nextMonth > 12) { nextMonth = 1; nextYear += 1 }
+        return { year: nextYear, month: nextMonth }
+      })
+      setSelectedDate(null)
+      if (viewMode) closeViewMode()
+      requestAnimationFrame(() => requestAnimationFrame(() => setMonthVisible(true)))
+    }, 200)
+  }
+
+  function goToToday() {
+    setMonthVisible(false)
+    setTimeout(() => {
+      const now = new Date()
+      setYearMonth({ year: now.getFullYear(), month: now.getMonth() + 1 })
       setSelectedDate(null)
       if (viewMode) closeViewMode()
       requestAnimationFrame(() => requestAnimationFrame(() => setMonthVisible(true)))
@@ -159,6 +179,18 @@ export default function AdminDashboard() {
   const eventCategories = new Map<string, string>()
   events.forEach(e => { if (!eventCategories.has(e.date)) eventCategories.set(e.date, e.category) })
   const eventsForDate = selectedDate ? events.filter(e => e.date === selectedDate) : []
+
+  // Group events by month for the All Events list (events already sorted by date asc)
+  const eventsByMonth: { key: string; label: string; events: Event[] }[] = []
+  events.forEach(ev => {
+    const key = ev.date.slice(0, 7) // YYYY-MM
+    const group = eventsByMonth[eventsByMonth.length - 1]
+    if (group && group.key === key) {
+      group.events.push(ev)
+    } else {
+      eventsByMonth.push({ key, label: fmtMonthHeader(ev.date), events: [ev] })
+    }
+  })
 
   return (
     <>
@@ -238,36 +270,48 @@ export default function AdminDashboard() {
                   </span>
                 )}
                 {tab === 'calendar' && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <button
-                      onClick={() => month > MIN_MONTH && changeMonth(-1)}
-                      disabled={month === MIN_MONTH}
+                      onClick={goToToday}
                       style={{
                         background: 'none', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 4,
-                        padding: '4px 5px', cursor: month === MIN_MONTH ? 'default' : 'pointer',
-                        color: month === MIN_MONTH ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.5)',
-                        display: 'flex', alignItems: 'center',
+                        padding: '4px 8px', cursor: 'pointer',
+                        fontSize: 10, fontWeight: 800, letterSpacing: '0.06em',
+                        fontFamily: 'var(--font-body)', color: 'rgba(0,0,0,0.5)',
                         transition: 'color var(--duration-base) var(--ease-out)',
                       }}
                     >
-                      <ChevronLeft size={12} strokeWidth={2.5} />
+                      TODAY
                     </button>
-                    <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0E0E0E', fontFamily: 'var(--font-display)', minWidth: 64, textAlign: 'center' }}>
-                      {month === 6 ? 'JUNE' : 'JULY'} 2026
-                    </span>
-                    <button
-                      onClick={() => month < MAX_MONTH && changeMonth(1)}
-                      disabled={month === MAX_MONTH}
-                      style={{
-                        background: 'none', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 4,
-                        padding: '4px 5px', cursor: month === MAX_MONTH ? 'default' : 'pointer',
-                        color: month === MAX_MONTH ? 'rgba(0,0,0,0.2)' : 'rgba(0,0,0,0.5)',
-                        display: 'flex', alignItems: 'center',
-                        transition: 'color var(--duration-base) var(--ease-out)',
-                      }}
-                    >
-                      <ChevronRight size={12} strokeWidth={2.5} />
-                    </button>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <button
+                        onClick={() => changeMonth(-1)}
+                        style={{
+                          background: 'none', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 4,
+                          padding: '4px 5px', cursor: 'pointer',
+                          color: 'rgba(0,0,0,0.5)',
+                          display: 'flex', alignItems: 'center',
+                          transition: 'color var(--duration-base) var(--ease-out)',
+                        }}
+                      >
+                        <ChevronLeft size={12} strokeWidth={2.5} />
+                      </button>
+                      <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0E0E0E', fontFamily: 'var(--font-display)', minWidth: 64, textAlign: 'center' }}>
+                        {new Date(year, month - 1, 1).toLocaleString('en-US', { month: 'long' }).toUpperCase()}
+                      </span>
+                      <button
+                        onClick={() => changeMonth(1)}
+                        style={{
+                          background: 'none', border: '1px solid rgba(0,0,0,0.12)', borderRadius: 4,
+                          padding: '4px 5px', cursor: 'pointer',
+                          color: 'rgba(0,0,0,0.5)',
+                          display: 'flex', alignItems: 'center',
+                          transition: 'color var(--duration-base) var(--ease-out)',
+                        }}
+                      >
+                        <ChevronRight size={12} strokeWidth={2.5} />
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -290,7 +334,7 @@ export default function AdminDashboard() {
                   transition: 'opacity var(--duration-base) var(--ease-out), transform var(--duration-base) var(--ease-out)',
                 }}>
                   <CalendarGrid
-                    year={YEAR} month={month}
+                    year={year} month={month}
                     eventDates={allEventDates}
                     selectedDate={selectedDate}
                     onSelectDate={handleDateSelect}
@@ -321,8 +365,17 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-                  {events.map(ev => {
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  {eventsByMonth.map(group => (
+                    <div key={group.key} style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                      <div style={{
+                        fontSize: 10, fontWeight: 800, letterSpacing: '0.12em',
+                        color: 'rgba(0,0,0,0.4)', fontFamily: 'var(--font-display)',
+                        padding: '0 2px 4px',
+                      }}>
+                        {group.label}
+                      </div>
+                      {group.events.map(ev => {
                     const meta = getCategoryMeta(ev.category)
                     return (
                       <div
@@ -391,8 +444,10 @@ export default function AdminDashboard() {
                           <Trash2 size={14} strokeWidth={2} />
                         </button>
                       </div>
-                    )
-                  })}
+                      )
+                    })}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -465,7 +520,7 @@ export default function AdminDashboard() {
               overflowY: 'auto', overflowX: 'hidden',
             }}>
               <DateStrip
-                year={YEAR} month={month}
+                year={year} month={month}
                 eventDates={allEventDates}
                 selectedDate={selectedDate}
                 onSelectDate={date => setSelectedDate(date)}

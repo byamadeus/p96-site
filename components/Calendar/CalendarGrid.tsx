@@ -200,6 +200,8 @@ export default function CalendarGrid({
   for (let i = 0; i < cells.length; i += 7) rows.push(cells.slice(i, i + 7))
 
   const cellSize = compact ? 28 : 44
+  const today = new Date()
+  const todayStr = isoDate(today.getFullYear(), today.getMonth() + 1, today.getDate())
 
   return (
     <div>
@@ -273,6 +275,7 @@ export default function CalendarGrid({
               const hasEvents = eventDates.has(dateStr)
               const isSelected = selectedDate === dateStr
               const isInteractive = adminMode ? true : (hasEvents || isPriority)
+              const isToday = dateStr === todayStr
 
               // ── Cell colors ─────────────────────────────────────
               let bg = 'transparent'
@@ -336,6 +339,7 @@ export default function CalendarGrid({
                 cursor: isInteractive ? 'pointer' : 'default',
                 transition: 'background var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out)',
                 userSelect: 'none',
+                boxShadow: (isToday && !isSelected) ? `inset 0 0 0 2px ${light ? 'rgba(0,0,0,0.55)' : 'rgba(0,0,0,0.6)'}` : undefined,
               }
 
               if (compact) {

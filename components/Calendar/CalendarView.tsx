@@ -159,6 +159,18 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
     })
   }
 
+  function goToToday() {
+    setMonthVisible(false)
+    setTimeout(() => {
+      const now = new Date()
+      setYearMonth(wcMode ? { year: WC_YEAR, month: Math.min(Math.max(now.getMonth() + 1, WC_MIN_MONTH), WC_MAX_MONTH) } : { year: now.getFullYear(), month: now.getMonth() + 1 })
+      setSelectedDate(null)
+      router.replace(wcMode ? '/world-cup2026/calendar' : '/calendar', { scroll: false })
+      if (viewMode) closeViewMode()
+      requestAnimationFrame(() => requestAnimationFrame(() => setMonthVisible(true)))
+    }, 200)
+  }
+
   function changeMonth(dir: 1 | -1) {
     setMonthVisible(false)
     setTimeout(() => {
@@ -261,7 +273,7 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
               color: '#0E0E0E',
               lineHeight: 1,
             }}>
-              {new Date(year, month - 1, 1).toLocaleString('en-US', { month: 'long' })} {year}
+              {new Date(year, month - 1, 1).toLocaleString('en-US', { month: 'long' })}{wcMode ? ` ${year}` : ''}
             </span>
 
             <button
@@ -277,6 +289,25 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
               <ChevronRight size={20} strokeWidth={2.5} />
             </button>
           </div>
+
+          {!wcMode && (
+            <button
+              onClick={goToToday}
+              style={{
+                marginTop: 8,
+                background: 'none', border: 'none', padding: '2px 8px',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700,
+                letterSpacing: '0.1em', textTransform: 'uppercase',
+                color: 'rgba(0,0,0,0.4)',
+                transition: 'color 0.15s',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = 'rgba(0,0,0,0.7)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(0,0,0,0.4)')}
+            >
+              Today
+            </button>
+          )}
         </div>
 
         {/* Category filter — evergreen calendar only */}
