@@ -4,23 +4,16 @@
 
 .logo-mark-container {
   position: absolute;
-  left: calc(70% - 100px);
-  top: 45%;
-  transform: translateY(-50%);
-  width: 20vw;
-  height: 20vw;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(180px, 30vw, 420px);
+  height: clamp(180px, 30vw, 420px);
   z-index: 0;
 }
 
 @media (max-width: 768px) {
   .landing-content {
     padding: 16px;
-  }
-  .logo-mark-container {
-    left: 68%;
-    top: 17%;
-    transform: translate(-50%, 0);
-    width: min(200px, 30vw);
-    height: min(200px, 30vw);
   }
 }
