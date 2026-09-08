@@ -14,7 +14,7 @@ import LeadCaptureModal from './LeadCaptureModal'
 import CategoryFilterPanel from './CategoryFilterPanel'
 import { matches, Match } from '@/data/matches'
 import { Event } from '@/lib/supabase'
-import { useAppStore } from '@/lib/store'
+import { useAppStore, hasIntakeCookie } from '@/lib/store'
 
 const WC_YEAR = 2026
 const WC_MIN_MONTH = 6
@@ -191,6 +191,16 @@ export default function CalendarView({ events, draftDates = new Set(), initialDa
   function handleDateSelect(date: string) {
     setSelectedDate(date)
     router.replace(`${wcMode ? '/world-cup2026/calendar' : '/calendar'}?date=${date}`, { scroll: false })
+    if (!wcMode) {
+      try {
+        if (!hasIntakeCookie() && !localStorage.getItem('p96_calendar_seen')) {
+          localStorage.setItem('p96_calendar_seen', '1')
+          setShowLeadCapture(true)
+        }
+      } catch {
+        // localStorage unavailable — skip
+      }
+    }
     if (!allEventDates.has(date)) {
       setShowLeadCapture(true)
       return
