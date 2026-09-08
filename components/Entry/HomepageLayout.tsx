@@ -63,7 +63,7 @@ export default function HomepageLayout() {
               transition: 'opacity 0.2s',
             }}
           >
-            <span style={{ fontSize: 'clamp(40px, 9vw, 64px)', textTransform: 'uppercase' }}>
+            <span style={{ fontSize: 'clamp(20px, calc(7.25vw - 4px), 64px)', textTransform: 'uppercase' }}>
               EVENTS
             </span>
           </Link>
@@ -76,7 +76,7 @@ export default function HomepageLayout() {
             onMouseLeave={() => setHovered(null)}
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(40px, 9vw, 64px)',
+              fontSize: 'clamp(20px, calc(7.25vw - 4px), 64px)',
               fontWeight: 800,
               lineHeight: 0.95,
               letterSpacing: '-0.03em',
@@ -98,7 +98,7 @@ export default function HomepageLayout() {
             onMouseLeave={() => setHovered(null)}
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(40px, 9vw, 64px)',
+              fontSize: 'clamp(20px, calc(7.25vw - 4px), 64px)',
               fontWeight: 800,
               lineHeight: 0.95,
               letterSpacing: '-0.03em',
@@ -119,7 +119,7 @@ export default function HomepageLayout() {
             onMouseLeave={() => setHovered(null)}
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(40px, 9vw, 64px)',
+              fontSize: 'clamp(20px, calc(7.25vw - 4px), 64px)',
               fontWeight: 800,
               lineHeight: 0.95,
               letterSpacing: '-0.03em',
