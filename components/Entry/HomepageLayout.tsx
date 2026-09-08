@@ -45,7 +45,7 @@ export default function HomepageLayout() {
 
           {/* EVENTS — active */}
           <Link
-            href="/calendar"
+            href="/access"
             onMouseEnter={() => setHovered('events')}
             onMouseLeave={() => setHovered(null)}
             style={{

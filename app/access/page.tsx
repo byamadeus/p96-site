@@ -1,4 +1,4 @@
-// Access gate — blue gradient splash with P96 mark, "Get Access" routes into the calendar.
+// Access gate — green gradient splash with P96 mark, "Get Access" routes into the calendar.
 'use client'
 
 import { useEffect } from 'react'
@@ -9,7 +9,7 @@ export default function AccessGate() {
   const router = useRouter()
 
   useEffect(() => {
-    document.documentElement.style.backgroundColor = '#7BBAD6'
+    document.documentElement.style.backgroundColor = '#2F6957'
     document.body.style.backgroundColor = 'transparent'
     return () => {
       document.documentElement.style.backgroundColor = ''
@@ -32,7 +32,7 @@ export default function AccessGate() {
 
       <main style={{
         minHeight: '100dvh',
-        background: 'radial-gradient(ellipse at 70% 50%, #FFFFFF 0%, #C5E8F5 42%, #7BBAD6 100%)',
+        background: 'radial-gradient(ellipse at 70% 50%, #FFFFFF 0%, #ACC3BC 42%, #2F6957 100%)',
         position: 'relative',
         overflow: 'hidden',
       }}>
@@ -85,7 +85,7 @@ export default function AccessGate() {
               fontWeight: 900, lineHeight: 0.9, letterSpacing: '-0.04em',
               color: '#0E0E0E', textTransform: 'uppercase', marginBottom: 20,
             }}>
-              Diaspora<br />World Cup<br />Activation<br />Series
+              Culture<br />Community<br />Every<br />Day
             </h1>
             <p style={{ backgroundColor: '#000000', padding: '2px 4px',
               fontFamily: 'var(--font-body)', fontSize: 11,
@@ -96,14 +96,8 @@ export default function AccessGate() {
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
               letterSpacing: '0.13em', textTransform: 'uppercase',
-              color: '#0E0E0E', opacity: 0.55, marginBottom: 6,
-            }}>Watch Parties · Play Days · Community Programming</p>
-
-            <p style={{
-              fontFamily: 'var(--font-body)', fontSize: 11,
-              letterSpacing: '0.09em', textTransform: 'uppercase',
               color: '#0E0E0E', opacity: 0.55, marginBottom: 24,
-            }}>June – July 2026</p>
+            }}>Music · Art · Wellness · Food · Film</p>
 
             <button onClick={() => router.push('/calendar')} className="get-access-btn" style={{
               background: '#0E0E0E', color: '#FFFFFF', border: 'none', borderRadius: 4,
