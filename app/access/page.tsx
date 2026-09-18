@@ -35,6 +35,13 @@ export default function AccessGate() {
         overflow: 'hidden',
       }}>
 
+        {/* Dark scrim */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(0,0,0,0.3)',
+        }} />
+
         <div className="landing-content" style={{
           position: 'relative', zIndex: 1,
           margin: '0 auto',
@@ -51,7 +58,7 @@ export default function AccessGate() {
             <span style={{
               fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700,
               letterSpacing: '0.2em', textTransform: 'uppercase',
-              color: '#0E0E0E', opacity: 0.45,
+              color: '#FFFFFF', opacity: 0.45,
               display: 'block', textAlign: 'left', width: '100%',
               marginTop: 4, padding: '0 4px',
             }}>Presents</span>
@@ -62,7 +69,7 @@ export default function AccessGate() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(24px, 3.2vw, 48px)',
               fontWeight: 900, lineHeight: 0.9, letterSpacing: '-0.04em',
-              color: '#0E0E0E', textTransform: 'uppercase', marginBottom: 20,
+              color: '#FFFFFF', textTransform: 'uppercase', marginBottom: 20,
             }}>
               Culture<br />Community<br />Every<br />Day
             </h1>
@@ -75,7 +82,7 @@ export default function AccessGate() {
             <p style={{
               fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 700,
               letterSpacing: '0.13em', textTransform: 'uppercase',
-              color: '#0E0E0E', opacity: 0.55, marginBottom: 24,
+              color: '#FFFFFF', opacity: 0.55, marginBottom: 24,
             }}>Music · Art · Wellness · Food · Film</p>
 
             <button onClick={() => router.push('/calendar')} className="get-access-btn" style={{
