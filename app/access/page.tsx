@@ -53,7 +53,7 @@ export default function AccessGate() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', pointerEvents: 'auto', width: 'fit-content' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/landing/image-1779745706618.webp" alt="Project96" draggable={false}
-              style={{ maxWidth: 130, width: '100%', height: 'auto' }}
+              style={{ maxWidth: 130, width: '100%', height: 'auto', filter: 'invert(1)' }}
             />
             <span style={{
               fontFamily: 'var(--font-body)', fontSize: 10, fontWeight: 700,
