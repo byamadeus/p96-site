@@ -2,16 +2,6 @@
   padding: 48px;
 }
 
-.logo-mark-container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(180px, 30vw, 420px);
-  height: clamp(180px, 30vw, 420px);
-  z-index: 0;
-}
-
 @media (max-width: 768px) {
   .landing-content {
     padding: 16px;

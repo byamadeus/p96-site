@@ -13,17 +13,16 @@ export default function HomepageLayout() {
       <div style={{
         position: 'absolute',
         inset: 0,
-        backgroundImage: 'url(/capture-11.jpg)',
+        backgroundImage: 'url(/homepage-hero.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        opacity: 0.85,
       }} />
 
       {/* Dark scrim */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.4) 100%)',
+        background: 'rgba(0,0,0,0.3)',
       }} />
 
       {/* Content layer */}
@@ -43,10 +42,10 @@ export default function HomepageLayout() {
         {/* Bottom nav block */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
 
-          {/* EVENTS — active */}
+          {/* STUDIO — active */}
           <Link
             href="/access"
-            onMouseEnter={() => setHovered('events')}
+            onMouseEnter={() => setHovered('studio')}
             onMouseLeave={() => setHovered(null)}
             style={{
               fontFamily: 'var(--font-display)',
@@ -59,12 +58,12 @@ export default function HomepageLayout() {
               gap: 12,
               flexWrap: 'wrap',
               textDecoration: 'none',
-              opacity: hovered === 'events' ? 0.7 : 1,
+              opacity: hovered === 'studio' ? 0.7 : 1,
               transition: 'opacity 0.2s',
             }}
           >
             <span style={{ fontSize: 'clamp(20px, calc(7.25vw - 4px), 64px)', textTransform: 'uppercase' }}>
-              EVENTS
+              STUDIO
             </span>
           </Link>
 
